@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "email": "kim@sogang.ac.kr",
+    "nickname": "김서강",
+    "profile_url": "",
+    "review_cnt": 2
+  },
+  {
+    "id": 2,
+    "email": "lee@sogang.ac.kr",
+    "nickname": "이마포",
+    "profile_url": "",
+    "review_cnt": 2
+  },
+  {
+    "id": 3,
+    "email": "park@sogang.ac.kr",
+    "nickname": "박신촌",
+    "profile_url": "",
+    "review_cnt": 1
+  }
+]

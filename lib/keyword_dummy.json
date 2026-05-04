@@ -1,0 +1,10 @@
+[
+  { "keyword_id": 1, "name": "밥약하기 좋아요", "order": 1 },
+  { "keyword_id": 2, "name": "맛이 있어요", "order": 2 },
+  { "keyword_id": 3, "name": "가성비 좋아요", "order": 3 },
+  { "keyword_id": 4, "name": "분위기 좋아요", "order": 4 },
+  { "keyword_id": 5, "name": "친절해요", "order": 5 },
+  { "keyword_id": 6, "name": "혼자 먹기 좋아요", "order": 6 },
+  { "keyword_id": 7, "name": "모임장소로 좋아요", "order": 7 },
+  { "keyword_id": 8, "name": "데이트하기 좋아요", "order": 8 }
+]

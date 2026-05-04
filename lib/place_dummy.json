@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "latitude": 37.5513,
+    "longitude": 126.9370,
+    "name": "홍대갈비",
+    "classification": "한식",
+    "img_url": "",
+    "ribbon_cardinal": 0,
+    "ribbon_deepred": 2,
+    "ribbon_pink": 1,
+    "keywords": [
+      { "name": "맛이 있어요", "count": 42 },
+      { "name": "가성비 좋아요", "count": 35 },
+      { "name": "모임장소로 좋아요", "count": 28 }
+    ]
+  },
+  {
+    "id": 2,
+    "latitude": 37.5520,
+    "longitude": 126.9390,
+    "name": "스시노미",
+    "classification": "일식",
+    "img_url": "",
+    "ribbon_cardinal": 1,
+    "ribbon_deepred": 3,
+    "ribbon_pink": 2,
+    "keywords": [
+      { "name": "데이트하기 좋아요", "count": 55 },
+      { "name": "분위기 좋아요", "count": 50 },
+      { "name": "맛이 있어요", "count": 48 }
+    ]
+  },
+  {
+    "id": 3,
+    "latitude": 37.5505,
+    "longitude": 126.9355,
+    "name": "파파로티 파스타",
+    "classification": "양식",
+    "img_url": "",
+    "ribbon_cardinal": 0,
+    "ribbon_deepred": 0,
+    "ribbon_pink": 1,
+    "keywords": [
+      { "name": "밥약하기 좋아요", "count": 30 },
+      { "name": "혼자 먹기 좋아요", "count": 25 },
+      { "name": "친절해요", "count": 22 }
+    ]
+  }
+]

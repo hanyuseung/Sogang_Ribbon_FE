@@ -1,0 +1,11 @@
+[
+  { "place_id": 1, "keyword_id": 2, "count": 42 },
+  { "place_id": 1, "keyword_id": 3, "count": 35 },
+  { "place_id": 1, "keyword_id": 7, "count": 28 },
+  { "place_id": 2, "keyword_id": 8, "count": 55 },
+  { "place_id": 2, "keyword_id": 4, "count": 50 },
+  { "place_id": 2, "keyword_id": 2, "count": 48 },
+  { "place_id": 3, "keyword_id": 1, "count": 30 },
+  { "place_id": 3, "keyword_id": 6, "count": 25 },
+  { "place_id": 3, "keyword_id": 5, "count": 22 }
+]

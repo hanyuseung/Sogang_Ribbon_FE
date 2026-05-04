@@ -1,0 +1,8 @@
+[
+  { "award_category_id": 1, "place_id": 1, "count": 148, "rank": 1 },
+  { "award_category_id": 2, "place_id": 2, "count": 203, "rank": 1 },
+  { "award_category_id": 3, "place_id": 3, "count": 97, "rank": 1 },
+  { "award_category_id": 4, "place_id": 2, "count": 312, "rank": 1 },
+  { "award_category_id": 4, "place_id": 1, "count": 189, "rank": 2 },
+  { "award_category_id": 4, "place_id": 3, "count": 104, "rank": 3 }
+]

@@ -1,0 +1,6 @@
+[
+  { "id": 1, "award_id": 1, "name": "최고 한식 맛집" },
+  { "id": 2, "award_id": 1, "name": "최고 일식 맛집" },
+  { "id": 3, "award_id": 1, "name": "최고 양식 맛집" },
+  { "id": 4, "award_id": 1, "name": "올해의 맛집" }
+]
