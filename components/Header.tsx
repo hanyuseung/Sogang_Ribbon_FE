@@ -7,16 +7,21 @@ export default function Header() {
   const { user, login, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-10 bg-white border-b border-zinc-100 px-4 h-14 flex items-center justify-between">
-      <span className="text-lg font-bold tracking-tight text-red-800">서강리본</span>
+    <header className="sticky top-0 z-20 h-16 px-5 bg-[rgba(255,248,251,0.92)] backdrop-blur-[14px] border-b border-[#f3d5df] flex items-center justify-between">
+      <div className="flex items-center gap-1.5 text-xl font-black text-[#d6336c]">
+        🎀 서강리본
+      </div>
       {user ? (
-        <Link href="/mypage" className="text-sm text-zinc-600 hover:text-zinc-900 transition-colors">
-          {user.nickname}
-        </Link>
+        <button
+          onClick={logout}
+          className="px-[13px] py-2 rounded-full bg-[#2b1b22] text-white text-[13px] font-bold"
+        >
+          <Link href="/mypage">{user.nickname}</Link>
+        </button>
       ) : (
         <button
           onClick={login}
-          className="text-sm text-zinc-500 hover:text-zinc-800 transition-colors"
+          className="px-[13px] py-2 rounded-full bg-[#2b1b22] text-white text-[13px] font-bold"
         >
           로그인
         </button>

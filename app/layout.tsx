@@ -25,12 +25,20 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+        />
+      </head>
+      <body className="min-h-full">
+        <div className="w-full max-w-[430px] min-h-screen mx-auto bg-[#fff8fb] relative pb-[92px] shadow-[0_0_40px_rgba(43,27,34,0.12)]">
           <Providers>{children}</Providers>
-        </body>
+        </div>
+      </body>
     </html>
   );
 }
