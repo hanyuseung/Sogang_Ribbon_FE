@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Providers from "@/app/providers";
+import BottomNav from "@/components/BottomNav";
+import PageTransition from "@/components/PageTransition";
+import AppHeader from "@/components/AppHeader";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -35,8 +38,12 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full">
-        <div className="w-full max-w-[430px] min-h-screen mx-auto bg-[#fff8fb] relative pb-[92px] shadow-[0_0_40px_rgba(43,27,34,0.12)]">
-          <Providers>{children}</Providers>
+        <div className="w-full max-w-[430px] min-h-screen mx-auto bg-[#fff8fb] flex flex-col relative pb-[92px] shadow-[0_0_40px_rgba(43,27,34,0.12)]">
+          <Providers>
+            <AppHeader />
+            <PageTransition>{children}</PageTransition>
+          </Providers>
+          <BottomNav />
         </div>
       </body>
     </html>

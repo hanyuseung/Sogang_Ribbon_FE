@@ -46,5 +46,53 @@
       { "name": "혼자 먹기 좋아요", "count": 25 },
       { "name": "친절해요", "count": 22 }
     ]
+  },
+  {
+    "id": 4,
+    "latitude": 37.5498,
+    "longitude": 126.9362,
+    "name": "마포왕족발",
+    "classification": "한식",
+    "img_url": "",
+    "ribbon_cardinal": 0,
+    "ribbon_deepred": 1,
+    "ribbon_pink": 3,
+    "keywords": [
+      { "name": "가성비 좋아요", "count": 61 },
+      { "name": "모임장소로 좋아요", "count": 44 },
+      { "name": "맛이 있어요", "count": 39 }
+    ]
+  },
+  {
+    "id": 5,
+    "latitude": 37.5528,
+    "longitude": 126.9378,
+    "name": "버거플래닛",
+    "classification": "양식",
+    "img_url": "",
+    "ribbon_cardinal": 0,
+    "ribbon_deepred": 0,
+    "ribbon_pink": 2,
+    "keywords": [
+      { "name": "혼자 먹기 좋아요", "count": 33 },
+      { "name": "가성비 좋아요", "count": 27 },
+      { "name": "친절해요", "count": 19 }
+    ]
+  },
+  {
+    "id": 6,
+    "latitude": 37.5510,
+    "longitude": 126.9345,
+    "name": "춘천막국수",
+    "classification": "한식",
+    "img_url": "",
+    "ribbon_cardinal": 1,
+    "ribbon_deepred": 2,
+    "ribbon_pink": 0,
+    "keywords": [
+      { "name": "분위기 좋아요", "count": 38 },
+      { "name": "밥약하기 좋아요", "count": 31 },
+      { "name": "맛이 있어요", "count": 29 }
+    ]
   }
 ]
