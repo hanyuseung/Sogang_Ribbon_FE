@@ -22,13 +22,15 @@ function getTopRibbon(place: Place): RibbonTier {
   return null;
 }
 
-export default function PlaceCard({ place }: { place: Place }) {
+export default function PlaceCard({ place, isActive }: { place: Place; isActive?: boolean }) {
   const topRibbon = getTopRibbon(place);
 
   return (
     <Link
       href={`/place/${place.id}`}
-      className="flex gap-3 items-center p-4 rounded-[22px] bg-white shadow-[0_10px_24px_rgba(80,37,54,0.07)]"
+      className={`flex gap-3 items-center p-4 rounded-[22px] shadow-[0_10px_24px_rgba(80,37,54,0.07)] transition-colors ${
+        isActive ? "bg-[#fff0f5] ring-2 ring-[#d6336c]" : "bg-white"
+      }`}
     >
       <div className="w-[74px] h-[74px] flex-none rounded-[18px] bg-gradient-to-br from-[#ffd6e5] to-[#fff1f6] flex items-center justify-center overflow-hidden">
         {place.img_url ? (
@@ -48,7 +50,6 @@ export default function PlaceCard({ place }: { place: Place }) {
           </span>
         )}
         <h3 className="text-[17px] font-semibold mt-[5px] mb-0.5 truncate">{place.name}</h3>
-        <p className="text-[13px] text-[#7a5965] truncate">{place.classification}</p>
         <span className="inline-block mt-1.5 text-[13px] font-black text-[#d6336c]">
           자세히 보기
         </span>

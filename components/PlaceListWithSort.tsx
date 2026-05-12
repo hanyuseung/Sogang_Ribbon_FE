@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Place } from "@/types/place";
 import PlaceCard from "@/components/PlaceCard";
 
@@ -12,14 +12,26 @@ const KEYWORD_CHIPS = ["밥약하기 좋아요", "혼밥 가능", "가성비 좋
 const ribbonScore = (p: Place) =>
   p.ribbon_cardinal * 3 + p.ribbon_deepred * 2 + p.ribbon_pink * 1;
 
-export default function PlaceListWithSort({ places }: { places: Place[] }) {
+interface Props {
+  places: Place[];
+  selectedPlaceId?: number | null;
+}
+
+export default function PlaceListWithSort({ places, selectedPlaceId }: Props) {
   const [sort, setSort] = useState<SortOption>("거리순");
+  const cardRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
   const sorted = [...places].sort((a, b) => {
     if (sort === "리본별") return ribbonScore(b) - ribbonScore(a);
     if (sort === "가나다순") return a.name.localeCompare(b.name, "ko");
     return 0;
   });
+
+  useEffect(() => {
+    if (selectedPlaceId == null) return;
+    const el = cardRefs.current.get(selectedPlaceId);
+    el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [selectedPlaceId]);
 
   return (
     <>
@@ -49,7 +61,15 @@ export default function PlaceListWithSort({ places }: { places: Place[] }) {
 
       <div className="grid gap-3">
         {sorted.map((place) => (
-          <PlaceCard key={place.id} place={place} />
+          <div
+            key={place.id}
+            ref={(el) => {
+              if (el) cardRefs.current.set(place.id, el);
+              else cardRefs.current.delete(place.id);
+            }}
+          >
+            <PlaceCard place={place} isActive={place.id === selectedPlaceId} />
+          </div>
         ))}
       </div>
     </>

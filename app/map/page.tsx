@@ -1,5 +1,4 @@
-import MapPlaceholder from "@/components/MapPlaceholder";
-import PlaceListWithSort from "@/components/PlaceListWithSort";
+import MapSection from "@/components/MapSection";
 import placesData from "@/lib/place_dummy.json";
 import { Place } from "@/types/place";
 
@@ -20,8 +19,7 @@ export default function MapPage() {
           placeholder="식당명, 메뉴, 키워드 검색"
         />
 
-        <MapPlaceholder />
-        <PlaceListWithSort places={places} />
+        <MapSection places={places} />
       </section>
     </>
   );
