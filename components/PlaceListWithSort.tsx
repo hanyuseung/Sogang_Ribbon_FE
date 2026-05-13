@@ -19,6 +19,7 @@ interface Props {
 
 export default function PlaceListWithSort({ places, selectedPlaceId }: Props) {
   const [sort, setSort] = useState<SortOption>("거리순");
+  const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
   const sorted = [...places].sort((a, b) => {
@@ -29,12 +30,15 @@ export default function PlaceListWithSort({ places, selectedPlaceId }: Props) {
 
   useEffect(() => {
     if (selectedPlaceId == null) return;
+    const container = containerRef.current;
     const el = cardRefs.current.get(selectedPlaceId);
-    el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (!container || !el) return;
+    const top = el.offsetTop - container.offsetTop;
+    container.scrollTo({ top, behavior: "smooth" });
   }, [selectedPlaceId]);
 
   return (
-    <>
+    <div ref={containerRef} className="flex-1 overflow-y-auto pb-8">
       <div className="flex gap-2 overflow-x-auto pb-2 mb-[10px] no-scrollbar">
         {SORT_OPTIONS.map((option) => (
           <button
@@ -59,7 +63,7 @@ export default function PlaceListWithSort({ places, selectedPlaceId }: Props) {
         ))}
       </div>
 
-      <div className="grid gap-3">
+      <div className="flex flex-col gap-3 w-full px-4"> 
         {sorted.map((place) => (
           <div
             key={place.id}
@@ -67,11 +71,12 @@ export default function PlaceListWithSort({ places, selectedPlaceId }: Props) {
               if (el) cardRefs.current.set(place.id, el);
               else cardRefs.current.delete(place.id);
             }}
+            className="w-full" // 카드가 부모 너비 전체를 차지하도록 설정
           >
             <PlaceCard place={place} isActive={place.id === selectedPlaceId} />
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }

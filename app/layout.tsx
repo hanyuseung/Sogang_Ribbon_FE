@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Providers from "@/app/providers";
 import BottomNav from "@/components/BottomNav";
 import PageTransition from "@/components/PageTransition";
-import AppHeader from "@/components/AppHeader";
+import Header from "@/components/Header";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -41,7 +41,7 @@ export default function RootLayout({
       <body className="min-h-full">
         <div className="w-full max-w-[430px] min-h-screen mx-auto bg-[#fff8fb] flex flex-col relative pb-[92px] shadow-[0_0_40px_rgba(43,27,34,0.12)]">
           <Providers>
-            <AppHeader />
+            <Header />
             <PageTransition>{children}</PageTransition>
           </Providers>
           <BottomNav />
