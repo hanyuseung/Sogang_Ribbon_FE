@@ -1,0 +1,149 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id         Int             @id @default(autoincrement())
+  pw         String
+  email      String          @unique
+  nickname   String
+  profileUrl String?         @map("profile_url")
+  reviewCnt  Int             @default(0) @map("review_cnt")
+  reviews    Review[]
+  emblems    UserEmblem[]
+  bookmarks  PlaceBookmark[]
+
+  @@map("users")
+}
+
+model Place {
+  id             Int             @id @default(autoincrement())
+  latitude       Float
+  longitude      Float
+  name           String
+  classification String
+  imgUrl         String?         @map("img_url")
+  ribbonCardinal Int             @default(0) @map("ribbon_cardinal")
+  ribbonDeeped   Int             @default(0) @map("ribbon_deepred")
+  ribbonPink     Int             @default(0) @map("ribbon_pink")
+  reviews        Review[]
+  keywords       PlaceKeyword[]
+  bookmarks      PlaceBookmark[]
+  awardResults   AwardRes[]
+
+  @@map("places")
+}
+
+model Review {
+  id        Int           @id @default(autoincrement())
+  userId    Int           @map("userid")
+  placeId   Int           @map("placeid")
+  rating    Int
+  isDel     Boolean       @default(false) @map("is_del")
+  createdAt DateTime      @default(now()) @map("created_at")
+  user      User          @relation(fields: [userId], references: [id])
+  place     Place         @relation(fields: [placeId], references: [id])
+  images    ReviewImage[]
+  keywords  Keyword[]
+
+  @@map("reviews")
+}
+
+model ReviewImage {
+  id        Int      @id @default(autoincrement())
+  reviewId  Int      @map("reviewid")
+  imgUrl    String   @map("img_url")
+  sortOrder Int      @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  review    Review   @relation(fields: [reviewId], references: [id])
+
+  @@map("review_images")
+}
+
+model Keyword {
+  id            Int            @id @default(autoincrement()) @map("keyword_id")
+  name          String
+  order         Int
+  reviews       Review[]
+  placeKeywords PlaceKeyword[]
+
+  @@map("keywords")
+}
+
+model PlaceKeyword {
+  placeId   Int     @map("place_id")
+  keywordId Int     @map("keyword_id")
+  count     Int     @default(0)
+  place     Place   @relation(fields: [placeId], references: [id])
+  keyword   Keyword @relation(fields: [keywordId], references: [id])
+
+  @@id([placeId, keywordId])
+  @@map("place_keywords")
+}
+
+model PlaceBookmark {
+  userId  Int   @map("userid")
+  placeId Int   @map("place_id")
+  user    User  @relation(fields: [userId], references: [id])
+  place   Place @relation(fields: [placeId], references: [id])
+
+  @@id([userId, placeId])
+  @@map("place_bookmarks")
+}
+
+model Emblem {
+  id              Int          @id @default(autoincrement()) @map("emblem_id")
+  name            String
+  iconUrl         String       @map("icon_url")
+  tierOrder       Int          @map("tier_order")
+  reviewThreshold Int          @map("review_threshold")
+  type            String
+  userEmblems     UserEmblem[]
+
+  @@map("emblems")
+}
+
+model UserEmblem {
+  userId   Int    @map("userid")
+  emblemId Int    @map("emblemid")
+  user     User   @relation(fields: [userId], references: [id])
+  emblem   Emblem @relation(fields: [emblemId], references: [id])
+
+  @@id([userId, emblemId])
+  @@map("user_emblems")
+}
+
+model Award {
+  id         Int             @id @default(autoincrement()) @map("award_id")
+  name       String
+  date       DateTime        @db.Date
+  categories AwardCategory[]
+
+  @@map("awards")
+}
+
+model AwardCategory {
+  id      Int       @id @default(autoincrement())
+  awardId Int       @map("award_id")
+  name    String
+  award   Award     @relation(fields: [awardId], references: [id])
+  results AwardRes[]
+
+  @@map("award_categories")
+}
+
+model AwardRes {
+  awardCategoryId Int           @map("award_category_id")
+  placeId         Int           @map("place_id")
+  count           Int           @default(0)
+  rank            Int?
+  awardCategory   AwardCategory @relation(fields: [awardCategoryId], references: [id])
+  place           Place         @relation(fields: [placeId], references: [id])
+
+  @@id([awardCategoryId, placeId])
+  @@map("award_results")
+}

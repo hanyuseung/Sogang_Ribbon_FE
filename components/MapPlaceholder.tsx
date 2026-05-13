@@ -4,14 +4,17 @@ import { useKakaoLoader, Map, CustomOverlayMap } from "react-kakao-maps-sdk";
 import { Place } from "@/types/place";
 
 const SOGANG_CENTER = { lat: 37.551, lng: 126.9394 };
+const FILTER_OPTIONS = ["한식", "중식", "양식", "일식"];
 
 interface Props {
   places: Place[];
   selectedPlaceId: number | null;
   onMarkerClick: (id: number) => void;
+  activeFilter: string | null;
+  onFilterChange: (filter: string | null) => void;
 }
 
-export default function MapPlaceholder({ places, selectedPlaceId, onMarkerClick }: Props) {
+export default function MapPlaceholder({ places, selectedPlaceId, onMarkerClick, activeFilter, onFilterChange }: Props) {
   const [loading, error] = useKakaoLoader({
     appkey: process.env.NEXT_PUBLIC_KAKAO_JS_KEY!,
   });
@@ -29,12 +32,28 @@ export default function MapPlaceholder({ places, selectedPlaceId, onMarkerClick 
         </div>
       )}
       {!loading && !error && (
-        <Map
-          center={SOGANG_CENTER}
-          style={{ width: "100%", height: "100%" }}
-          level={4}
-        >
-          {places.map((place) => {
+        <>
+          <div className="absolute top-3 left-0 right-0 z-10 flex gap-2 px-3 overflow-x-auto no-scrollbar">
+            {FILTER_OPTIONS.map((filter) => (
+              <button
+                key={filter}
+                onClick={() => onFilterChange(activeFilter === filter ? null : filter)}
+                className={`flex-none px-[13px] py-[9px] rounded-full text-[13px] font-black border transition-colors ${
+                  activeFilter === filter
+                    ? "bg-[#d6336c] text-white border-[#d6336c]"
+                    : "bg-white text-[#d6336c] border-[#f0b6c9]"
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+          <Map
+            center={SOGANG_CENTER}
+            style={{ width: "100%", height: "100%" }}
+            level={4}
+          >
+            {places.map((place) => {
             const isSelected = place.id === selectedPlaceId;
             return (
               <CustomOverlayMap
@@ -72,7 +91,8 @@ export default function MapPlaceholder({ places, selectedPlaceId, onMarkerClick 
               </CustomOverlayMap>
             );
           })}
-        </Map>
+          </Map>
+        </>
       )}
     </div>
   );
