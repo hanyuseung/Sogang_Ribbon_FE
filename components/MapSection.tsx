@@ -9,7 +9,7 @@ export default function MapSection({ places }: { places: Place[] }) {
   const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
 
   return (
-    <>
+    <div className="flex-1 flex flex-col min-h-0">
       <MapPlaceholder
         places={places}
         selectedPlaceId={selectedPlaceId}
@@ -19,6 +19,6 @@ export default function MapSection({ places }: { places: Place[] }) {
         places={places}
         selectedPlaceId={selectedPlaceId}
       />
-    </>
+    </div>
   );
 }

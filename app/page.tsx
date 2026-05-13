@@ -27,9 +27,12 @@ export default function HomePage() {
           >
             지도 보기
           </Link>
-          <button className="inline-flex items-center justify-center min-h-[46px] px-[18px] rounded-full bg-white text-[#d6336c] border border-[#f0b6c9] text-sm font-black">
+          <Link
+            href="/gacha"
+            className="inline-flex items-center justify-center min-h-[46px] px-[18px] rounded-full bg-white text-[#d6336c] border border-[#f0b6c9] text-sm font-black"
+          >
             오늘 뭐 먹지?
-          </button>
+          </Link>
         </div>
 
         <div className="p-[22px] rounded-[28px] bg-gradient-to-br from-[#ffd6e5] to-white shadow-[0_18px_40px_rgba(214,51,108,0.16)]">

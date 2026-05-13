@@ -5,9 +5,9 @@ import { usePathname } from "next/navigation";
 import { Home, Map, Shuffle, MessageSquare, User } from "lucide-react";
 
 const NAV_ITEMS = [
-  { href: "/", icon: Home, label: "홈" },
+  { href: "/gacha", icon: Shuffle, label: "가챠" },
   { href: "/map", icon: Map, label: "지도" },
-  { href: "/gacha", icon: Shuffle, label: "가챠", accent: true },
+  { href: "/", icon: Home, label: "홈", accent: true },
   { href: "/community", icon: MessageSquare, label: "커뮤니티" },
   { href: "/mypage", icon: User, label: "마이" },
 ];

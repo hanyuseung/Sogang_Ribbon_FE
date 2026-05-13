@@ -28,11 +28,11 @@ export default function PlaceCard({ place, isActive }: { place: Place; isActive?
   return (
     <Link
       href={`/place/${place.id}`}
-      className={`flex gap-3 items-center p-4 rounded-[22px] shadow-[0_10px_24px_rgba(80,37,54,0.07)] transition-colors ${
+      className={`flex gap-3 items-center py-2 px-4 rounded-[22px] shadow-[0_10px_24px_rgba(80,37,54,0.07)] transition-colors ${
         isActive ? "bg-[#fff0f5] ring-2 ring-[#d6336c]" : "bg-white"
       }`}
     >
-      <div className="w-[74px] h-[74px] flex-none rounded-[18px] bg-gradient-to-br from-[#ffd6e5] to-[#fff1f6] flex items-center justify-center overflow-hidden">
+      <div className="w-[64px] h-[64px] flex-none rounded-[18px] bg-gradient-to-br from-[#ffd6e5] to-[#fff1f6] flex items-center justify-center overflow-hidden">
         {place.img_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={place.img_url} alt={place.name} className="object-cover w-full h-full" />
