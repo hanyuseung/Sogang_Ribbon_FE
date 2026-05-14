@@ -1,11 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import placesData from "@/lib/place_dummy.json";
-import keywordsData from "@/lib/keyword_dummy.json";
-import placeKeywordsData from "@/lib/place_keyword_dummy.json";
+import { getPlaceById } from "@/services/place";
 import { Place } from "@/types/place";
-import { Keyword, PlaceKeyword } from "@/types/keyword";
 
 type RibbonTier = "cardinal" | "deepred" | "pink" | null;
 
@@ -22,9 +19,9 @@ const RIBBON_CLASS: Record<NonNullable<RibbonTier>, string> = {
 };
 
 function getTopRibbon(place: Place): RibbonTier {
-  if (place.ribbon_cardinal > 0) return "cardinal";
-  if (place.ribbon_deepred > 0) return "deepred";
-  if (place.ribbon_pink > 0) return "pink";
+  if ((place.ribbon_cardinal ?? 0) > 0) return "cardinal";
+  if ((place.ribbon_deepred ?? 0) > 0) return "deepred";
+  if ((place.ribbon_pink ?? 0) > 0) return "pink";
   return null;
 }
 
@@ -34,18 +31,14 @@ export default async function PlaceDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const placeId = Number(id);
 
-  const place = (placesData as Place[]).find((p) => p.id === placeId);
+  const place = await getPlaceById(id);
   if (!place) notFound();
 
-  const keywords = keywordsData as Keyword[];
-  const placeKeywords = (placeKeywordsData as PlaceKeyword[])
-    .filter((pk) => pk.place_id === placeId)
-    .sort((a, b) => b.count - a.count);
-
+  const placeKeywords = place.keywords ?? [];
   const maxCount = placeKeywords[0]?.count ?? 1;
   const topRibbon = getTopRibbon(place);
+  const placeId = id;
 
   return (
     <div className="min-h-full bg-[#fff8fb]">
@@ -110,12 +103,10 @@ export default async function PlaceDetailPage({
               </div>
 
               {placeKeywords.map((pk) => {
-                const keyword = keywords.find((k) => k.keyword_id === pk.keyword_id);
-                if (!keyword) return null;
                 const pct = Math.round((pk.count / maxCount) * 100);
                 return (
-                  <div key={pk.keyword_id} className="mb-3 last:mb-0">
-                    <span className="block text-[13px] text-[#5c3b47] mb-1.5">{keyword.name}</span>
+                  <div key={pk.name} className="mb-3 last:mb-0">
+                    <span className="block text-[13px] text-[#5c3b47] mb-1.5">{pk.name}</span>
                     <div className="h-[10px] bg-[#f3d5df] rounded-full overflow-hidden">
                       <div
                         className="h-full bg-[#d6336c] rounded-full"

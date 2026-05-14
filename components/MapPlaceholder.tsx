@@ -8,8 +8,8 @@ const FILTER_OPTIONS = ["한식", "중식", "양식", "일식"];
 
 interface Props {
   places: Place[];
-  selectedPlaceId: number | null;
-  onMarkerClick: (id: number) => void;
+  selectedPlaceId: string | null;
+  onMarkerClick: (id: string) => void;
   activeFilter: string | null;
   onFilterChange: (filter: string | null) => void;
 }
@@ -54,6 +54,7 @@ export default function MapPlaceholder({ places, selectedPlaceId, onMarkerClick,
             level={4}
           >
             {places.map((place) => {
+            if (place.latitude == null || place.longitude == null) return null;
             const isSelected = place.id === selectedPlaceId;
             return (
               <CustomOverlayMap

@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { ChevronRight, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import reviewsData from "@/lib/review_dummy.json";
 import emblemsData from "@/lib/emblem_dummy.json";
 import userEmblemsData from "@/lib/user_emblem_dummy.json";
-import placesData from "@/lib/place_dummy.json";
 import keywordsData from "@/lib/keyword_dummy.json";
 import bookmarksData from "@/lib/place_bookmark_dummy.json";
 import { ReviewWithImages } from "@/types/review";
@@ -17,7 +17,6 @@ import { Keyword } from "@/types/keyword";
 import { PlaceBookmark } from "@/types/bookmark";
 
 const EMBLEMS = emblemsData as Emblem[];
-const PLACES = placesData as Place[];
 const KEYWORDS = keywordsData as Keyword[];
 
 const EMBLEM_STYLE: Record<string, { bar: string; label: string }> = {
@@ -36,6 +35,14 @@ function formatDate(dateStr: string) {
 export default function MyPage() {
   const { user, login, logout } = useAuth();
   const router = useRouter();
+  const [places, setPlaces] = useState<Place[]>([]);
+
+  useEffect(() => {
+    fetch("/api/places")
+      .then((r) => r.json())
+      .then(setPlaces)
+      .catch(() => {});
+  }, []);
 
   if (!user) {
     return (
@@ -71,7 +78,7 @@ export default function MyPage() {
 
   const myBookmarks = (bookmarksData as PlaceBookmark[]).filter((b) => b.userid === user.id);
   const bookmarkedPlaces = myBookmarks
-    .map((b) => PLACES.find((p) => p.id === b.place_id))
+    .map((b) => places.find((p) => p.id === String(b.place_id)))
     .filter((p): p is Place => !!p);
 
   const emblemStyle = currentEmblem ? EMBLEM_STYLE[currentEmblem.name] : null;
@@ -138,7 +145,7 @@ export default function MyPage() {
           ) : (
             <ul className="divide-y divide-[#f3d5df]">
               {myReviews.map((review) => {
-                const place = PLACES.find((p) => p.id === review.placeid);
+                const place = places.find((p) => p.id === String(review.placeid));
                 const reviewKeywords = review.keyword_ids
                   .map((id) => KEYWORDS.find((k) => k.keyword_id === id)?.name)
                   .filter((n): n is string => !!n);

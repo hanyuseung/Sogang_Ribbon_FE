@@ -1,16 +1,14 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Camera, X } from "lucide-react";
 import keywordsData from "@/lib/keyword_dummy.json";
-import placesData from "@/lib/place_dummy.json";
 import { Keyword } from "@/types/keyword";
 import { Place } from "@/types/place";
 
 const KEYWORDS = keywordsData as Keyword[];
-const PLACES = placesData as Place[];
 const MAX_IMAGES = 5;
 
 const GUIDELINES = [
@@ -23,8 +21,16 @@ const GUIDELINES = [
 export default function ReviewForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const placeId = Number(searchParams.get("placeId"));
-  const place = PLACES.find((p) => p.id === placeId);
+  const placeId = searchParams.get("placeId") ?? "";
+  const [place, setPlace] = useState<Place | null>(null);
+
+  useEffect(() => {
+    if (!placeId) return;
+    fetch(`/api/places/${placeId}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then(setPlace)
+      .catch(() => {});
+  }, [placeId]);
 
   const [rating, setRating] = useState<1 | 2 | 3 | 4 | 5 | null>(null);
   const [hoverRating, setHoverRating] = useState<number | null>(null);

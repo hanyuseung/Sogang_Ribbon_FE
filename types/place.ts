@@ -4,14 +4,14 @@ export type PlaceKeyword = {
 };
 
 export type Place = {
-  id: number;
-  latitude: number;
-  longitude: number;
+  id: string;
+  latitude: number | null;
+  longitude: number | null;
   name: string;
-  classification: string;
-  img_url: string;
-  ribbon_cardinal: number;
-  ribbon_deepred: number;
-  ribbon_pink: number;
+  classification: string | null;
+  img_url: string | null;
+  ribbon_cardinal: number | null;
+  ribbon_deepred: number | null;
+  ribbon_pink: number | null;
   keywords?: PlaceKeyword[];
 };

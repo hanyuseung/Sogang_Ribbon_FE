@@ -16,9 +16,9 @@ const RIBBON_CLASS: Record<NonNullable<RibbonTier>, string> = {
 };
 
 function getTopRibbon(place: Place): RibbonTier {
-  if (place.ribbon_cardinal > 0) return "cardinal";
-  if (place.ribbon_deepred > 0) return "deepred";
-  if (place.ribbon_pink > 0) return "pink";
+  if ((place.ribbon_cardinal ?? 0) > 0) return "cardinal";
+  if ((place.ribbon_deepred ?? 0) > 0) return "deepred";
+  if ((place.ribbon_pink ?? 0) > 0) return "pink";
   return null;
 }
 

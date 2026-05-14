@@ -1,9 +1,8 @@
 import MapSection from "@/components/MapSection";
-import placesData from "@/lib/place_dummy.json";
-import { Place } from "@/types/place";
+import { getPlaces } from "@/services/place";
 
-export default function MapPage() {
-  const places = placesData as Place[];
+export default async function MapPage() {
+  const places = await getPlaces();
 
   return (
     <>
