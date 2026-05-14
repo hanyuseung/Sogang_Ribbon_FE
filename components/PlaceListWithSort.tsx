@@ -10,17 +10,17 @@ const SORT_OPTIONS: SortOption[] = ["거리순", "리본별", "가나다순"];
 const KEYWORD_CHIPS = ["밥약하기 좋아요", "혼밥 가능", "가성비 좋아요", "분위기 좋아요"];
 
 const ribbonScore = (p: Place) =>
-  p.ribbon_cardinal * 3 + p.ribbon_deepred * 2 + p.ribbon_pink * 1;
+  (p.ribbon_cardinal ?? 0) * 3 + (p.ribbon_deepred ?? 0) * 2 + (p.ribbon_pink ?? 0);
 
 interface Props {
   places: Place[];
-  selectedPlaceId?: number | null;
+  selectedPlaceId?: string | null;
 }
 
 export default function PlaceListWithSort({ places, selectedPlaceId }: Props) {
   const [sort, setSort] = useState<SortOption>("거리순");
   const containerRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<Map<number, HTMLDivElement>>(new Map());
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   const sorted = [...places].sort((a, b) => {
     if (sort === "리본별") return ribbonScore(b) - ribbonScore(a);

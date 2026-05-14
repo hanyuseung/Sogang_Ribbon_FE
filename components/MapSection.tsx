@@ -6,7 +6,7 @@ import MapPlaceholder from "@/components/MapPlaceholder";
 import PlaceListWithSort from "@/components/PlaceListWithSort";
 
 export default function MapSection({ places }: { places: Place[] }) {
-  const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
   const filteredPlaces = activeFilter

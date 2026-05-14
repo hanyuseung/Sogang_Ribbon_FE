@@ -1,11 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import placesData from "@/lib/place_dummy.json";
+import { getPlaceById } from "@/services/place";
 import reviewsData from "@/lib/review_dummy.json";
 import usersData from "@/lib/user_dummy.json";
 import keywordsData from "@/lib/keyword_dummy.json";
-import { Place } from "@/types/place";
 import { ReviewWithImages } from "@/types/review";
 import { User } from "@/types/user";
 import { Keyword } from "@/types/keyword";
@@ -17,13 +16,13 @@ export default async function PlaceReviewsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const placeId = Number(id);
+  const placeId = id;
 
-  const place = (placesData as Place[]).find((p) => p.id === placeId);
+  const place = await getPlaceById(id);
   if (!place) notFound();
 
   const reviews = (reviewsData as ReviewWithImages[]).filter(
-    (r) => r.placeid === placeId && !r.is_del
+    (r) => String(r.placeid) === placeId && !r.is_del
   );
   const users = usersData as User[];
   const keywords = keywordsData as Keyword[];
