@@ -73,7 +73,15 @@ export default async function PlaceDetailPage({
             </span>
           )}
 
-          <h2 className="text-[27px] font-bold my-2">{place.name}</h2>
+          <div className="flex items-center gap-3 my-2">
+            <h2 className="text-[27px] font-bold">{place.name}</h2>
+            <Link
+              href={`/place/${placeId}/reviews`}
+              className="shrink-0 px-[11px] py-1 rounded-full bg-[#fff1f6] text-[#d6336c] text-xs font-black"
+            >
+              전체 리뷰
+            </Link>
+          </div>
           <p className="text-[#6f4c59] text-sm mb-4">{place.classification}</p>
 
           {/* 액션 버튼 */}
