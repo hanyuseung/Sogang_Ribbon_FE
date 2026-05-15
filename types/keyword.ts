@@ -4,6 +4,12 @@ export type Keyword = {
   order: number;
 };
 
+export type DbKeyword = {
+  id: string;
+  name: string | null;
+  order: number | null;
+};
+
 export type PlaceKeyword = {
   place_id: number;
   keyword_id: number;

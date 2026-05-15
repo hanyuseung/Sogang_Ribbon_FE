@@ -56,119 +56,122 @@ Naming: `camelCase` for variables/functions, `PascalCase` for component files.
 - `/page [name]` — generate a page skeleton (e.g. `/page main`, `/page mypage`, `/page review`)
 - `/erd` — review DB schema and write Supabase queries
 
-## Database Schema
-
-```
-erDiagram
-    USER ||--o{ REVIEW : "writes"
-    USER ||--o{ USER_EMBLEM : "possesses"
-    USER ||--o{ PLACE_BOOKMARK : "saves"
-
-    PLACE ||--o{ REVIEW : "has"
-    PLACE ||--o{ PLACE_KEYWORD : "tagged with"
-    PLACE ||--o{ AWARD_RES : "receives"
-
-    REVIEW ||--o{ REVIEW_IMAGES : "includes"
-    REVIEW }o--o{ KEYWORD : "contains"
-
-    KEYWORD ||--o{ PLACE_KEYWORD : "categorizes"
-
-    AWARD_CATEGORY ||--o{ AWARD_RES : "classified by"
-    AWARD ||--o{ AWARD_CATEGORY : "belongs to"
-
-    EMBLEM ||--o{ USER_EMBLEM : "granted to"
-
-    USER {
-        int id PK
-        string pw
-        string email
-        string nickname
-        string profile_url
-        int review_cnt
-    }
-
-    REVIEW {
-        int id PK
-        int userid FK
-        int placeid FK
-        int keyword_id FK "0–3 keywords"
-        int rating "5 or 3 stars"
-        boolean is_del
-        datetime created_at
-    }
-
-    REVIEW_IMAGES {
-        int id PK
-        int reviewid FK
-        string img_url
-        int sort_order
-        datetime created_at
-    }
-
-    PLACE {
-        int id PK
-        float latitude
-        float longitude
-        string name
-        string classification "e.g. Korean, Western"
-        string img_url
-        int ribbon_cardinal
-        int ribbon_deepred
-        int ribbon_pink
-    }
-
-    KEYWORD {
-        int keyword_id PK
-        string name
-        int order
-    }
-
-    PLACE_KEYWORD {
-        int place_id FK
-        int keyword_id FK
-        int count
-    }
-
-    AWARD_RES {
-        int award_category_id FK
-        int place_id FK
-        int count "vote count"
-        int rank "final rank"
-    }
-
-    AWARD_CATEGORY {
-        int id PK
-        int award_id FK
-        string name
-    }
-
-    AWARD {
-        int award_id PK
-        string name
-        date date
-    }
-
-    EMBLEM {
-        int emblem_id PK
-        string name
-        string icon_url
-        int tier_order
-        int review_threshold
-        string type
-    }
-
-    USER_EMBLEM {
-        int userid FK
-        int emblemid FK
-    }
-
-    PLACE_BOOKMARK {
-        int userid FK
-        int place_id FK
-    }
-```
-
 ## Core Features
+
+### DB SQL
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
+
+CREATE TABLE public.award (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  date_start timestamp with time zone,
+  CONSTRAINT award_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.award_category (
+  award_id uuid NOT NULL,
+  name text,
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  CONSTRAINT award_category_pkey PRIMARY KEY (id),
+  CONSTRAINT award_category_award_id_fkey FOREIGN KEY (award_id) REFERENCES public.award(id)
+);
+CREATE TABLE public.award_res (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  award_category_id uuid NOT NULL,
+  place_id uuid NOT NULL,
+  count bigint NOT NULL DEFAULT '0'::bigint,
+  rank smallint,
+  CONSTRAINT award_res_pkey PRIMARY KEY (id),
+  CONSTRAINT award_res_award_category_id_fkey FOREIGN KEY (award_category_id) REFERENCES public.award_category(id),
+  CONSTRAINT award_res_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.place(id)
+);
+CREATE TABLE public.emblem (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name text,
+  icon_url text,
+  tier_order smallint,
+  review_threshold bigint,
+  type text,
+  CONSTRAINT emblem_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.keyword (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name text,
+  order smallint,
+  CONSTRAINT keyword_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.place (
+  id uuid NOT NULL,
+  name text NOT NULL,
+  address text,
+  classification text,
+  latitude double precision,
+  longitude double precision,
+  img_url text,
+  ribbon_cardinal smallint,
+  ribbon_deepred smallint,
+  ribbon_pink smallint,
+  CONSTRAINT place_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.place_keyword (
+  place_id uuid NOT NULL,
+  keyword_id uuid NOT NULL,
+  count bigint NOT NULL DEFAULT '0'::bigint,
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  CONSTRAINT place_keyword_pkey PRIMARY KEY (id),
+  CONSTRAINT place_keyword_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.place(id),
+  CONSTRAINT place_keyword_keyword_id_fkey FOREIGN KEY (keyword_id) REFERENCES public.keyword(id)
+);
+CREATE TABLE public.review (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  content text,
+  rating smallint NOT NULL,
+  is_deleted boolean NOT NULL DEFAULT false,
+  place_id uuid,
+  user_id uuid NOT NULL,
+  keywords_id ARRAY,
+  CONSTRAINT review_pkey PRIMARY KEY (id),
+  CONSTRAINT review_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.place(id),
+  CONSTRAINT review_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user(id)
+);
+CREATE TABLE public.review_images (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  img_url text,
+  sort_order smallint,
+  review_id uuid NOT NULL,
+  CONSTRAINT review_images_pkey PRIMARY KEY (id),
+  CONSTRAINT review_images_review_id_fkey FOREIGN KEY (review_id) REFERENCES public.review(id)
+);
+CREATE TABLE public.review_keyword (
+  review_id uuid NOT NULL,
+  keyword_id uuid NOT NULL,
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  CONSTRAINT review_keyword_pkey PRIMARY KEY (id),
+  CONSTRAINT review_keyword_review_id_fkey FOREIGN KEY (review_id) REFERENCES public.review(id),
+  CONSTRAINT review_keyword_keyword_id_fkey FOREIGN KEY (keyword_id) REFERENCES public.keyword(id)
+);
+CREATE TABLE public.user (
+  id uuid NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  email text NOT NULL,
+  role text NOT NULL DEFAULT 'user'::text,
+  nickname text,
+  password text,
+  profile_url text,
+  review_cnt bigint NOT NULL DEFAULT '0'::bigint,
+  CONSTRAINT user_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.user_emblem (
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  user_id uuid NOT NULL,
+  emblem_id uuid NOT NULL,
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  CONSTRAINT user_emblem_pkey PRIMARY KEY (id),
+  CONSTRAINT user_emblem_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user(id),
+  CONSTRAINT user_emblem_emblem_id_fkey FOREIGN KEY (emblem_id) REFERENCES public.emblem(id)
+);
 
 ### Authentication
 Sogang University email verification is the primary login method; social login is also supported. Protected actions (writing reviews, bookmarking) must show a login-prompt modal when accessed unauthenticated.
