@@ -2,22 +2,19 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
 import { useEffect, useState } from "react";
 import { ChevronRight, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import reviewsData from "@/lib/review_dummy.json";
-import emblemsData from "@/lib/emblem_dummy.json";
-import userEmblemsData from "@/lib/user_emblem_dummy.json";
-import keywordsData from "@/lib/keyword_dummy.json";
-import bookmarksData from "@/lib/place_bookmark_dummy.json";
-import { ReviewWithImages } from "@/types/review";
 import { Emblem, UserEmblem } from "@/types/emblem";
 import { Place } from "@/types/place";
-import { Keyword } from "@/types/keyword";
 import { PlaceBookmark } from "@/types/bookmark";
+import { UserReview } from "@/services/review";
+import emblemsData from "@/lib/emblem_dummy.json";
+import userEmblemsData from "@/lib/user_emblem_dummy.json";
+import bookmarksData from "@/lib/place_bookmark_dummy.json";
 
 const EMBLEMS = emblemsData as Emblem[];
-const KEYWORDS = keywordsData as Keyword[];
 
 const EMBLEM_STYLE: Record<string, { bar: string; label: string }> = {
   bronze:   { bar: "bg-amber-400",  label: "브론즈" },
@@ -33,9 +30,10 @@ function formatDate(dateStr: string) {
 }
 
 export default function MyPage() {
-  const { user, login, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const router = useRouter();
   const [places, setPlaces] = useState<Place[]>([]);
+  const [myReviews, setMyReviews] = useState<UserReview[]>([]);
 
   useEffect(() => {
     fetch("/api/places")
@@ -44,6 +42,22 @@ export default function MyPage() {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    if (!user) return;
+    fetch(`/api/reviews?userId=${user.id}`)
+      .then((r) => r.json())
+      .then(setMyReviews)
+      .catch(() => {});
+  }, [user]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-full bg-[#fff8fb] flex items-center justify-center">
+        <p className="text-sm text-[#7a5965]">로딩 중...</p>
+      </div>
+    );
+  }
+
   if (!user) {
     return (
       <div className="min-h-full bg-[#fff8fb] flex flex-col">
@@ -51,23 +65,19 @@ export default function MyPage() {
           <p className="text-[#7a5965] text-sm leading-relaxed">
             로그인 후 마이페이지를<br />이용할 수 있어요
           </p>
-          <button
-            onClick={login}
+          <Link
+            href="/login"
             className="px-6 py-2.5 bg-[#d6336c] text-white text-sm font-bold rounded-full"
           >
             로그인
-          </button>
+          </Link>
         </div>
       </div>
     );
   }
 
-  const myReviews = (reviewsData as ReviewWithImages[]).filter(
-    (r) => r.userid === user.id && !r.is_del
-  );
-
   const myEmblemIds = (userEmblemsData as UserEmblem[])
-    .filter((ue) => ue.userid === user.id)
+    .filter((ue) => String(ue.userid) === user.id)
     .map((ue) => ue.emblemid);
   const currentEmblem = EMBLEMS.filter((e) => myEmblemIds.includes(e.emblem_id))
     .sort((a, b) => b.tier_order - a.tier_order)[0];
@@ -76,7 +86,7 @@ export default function MyPage() {
     ? Math.min(user.review_cnt / nextEmblem.review_threshold, 1)
     : 1;
 
-  const myBookmarks = (bookmarksData as PlaceBookmark[]).filter((b) => b.userid === user.id);
+  const myBookmarks = (bookmarksData as PlaceBookmark[]).filter((b) => String(b.userid) === user.id);
   const bookmarkedPlaces = myBookmarks
     .map((b) => places.find((p) => p.id === String(b.place_id)))
     .filter((p): p is Place => !!p);
@@ -145,23 +155,20 @@ export default function MyPage() {
           ) : (
             <ul className="divide-y divide-[#f3d5df]">
               {myReviews.map((review) => {
-                const place = places.find((p) => p.id === String(review.placeid));
-                const reviewKeywords = review.keyword_ids
-                  .map((id) => KEYWORDS.find((k) => k.keyword_id === id)?.name)
+                const reviewKeywords = review.keywords
+                  .map((rk) => rk.keyword.name)
                   .filter((n): n is string => !!n);
-                const stars = "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
                 return (
                   <li key={review.id}>
                     <Link
-                      href={`/place/${review.placeid}`}
+                      href={`/review/new?reviewId=${review.id}`}
                       className="flex items-start gap-3 px-5 py-4 hover:bg-[#fff8fb] transition-colors"
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <span className="font-bold text-[#2b1b22] text-sm truncate">
-                            {place?.name ?? "알 수 없는 식당"}
+                            {review.place?.name ?? "알 수 없는 식당"}
                           </span>
-                          <span className="text-amber-400 text-xs shrink-0">{stars}</span>
                         </div>
                         {reviewKeywords.length > 0 && (
                           <div className="flex flex-wrap gap-1 mb-1.5">
@@ -176,7 +183,7 @@ export default function MyPage() {
                           </div>
                         )}
                         <p className="text-xs text-[#7a5965] truncate">{review.content}</p>
-                        <p className="text-xs text-[#8a5165] mt-1">{formatDate(review.created_at)}</p>
+                        <p className="text-xs text-[#8a5165] mt-1">{formatDate(review.createdAt.toString())}</p>
                       </div>
                       <ChevronRight className="size-4 text-[#d6336c] shrink-0 mt-0.5" />
                     </Link>

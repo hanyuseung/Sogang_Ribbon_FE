@@ -1,33 +1,32 @@
-import { ReviewWithImages } from "@/types/review";
-import { User } from "@/types/user";
+import { ReviewWithRelations } from "@/services/review";
 
 type Props = {
-  review: ReviewWithImages;
-  user: User | undefined;
-  keywords: string[];
+  review: ReviewWithRelations;
 };
 
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
+function formatDate(date: Date) {
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
 }
 
-export default function ReviewCard({ review, user, keywords }: Props) {
-  const stars = "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
+export default function ReviewCard({ review }: Props) {
+  const keywords = review.keywords
+    .map((rk) => rk.keyword.name)
+    .filter((n): n is string => !!n);
 
   return (
     <div className="pb-1">
       <div className="flex items-center gap-2.5 mb-2.5">
         <div className="size-8 rounded-full bg-gradient-to-br from-[#ffd6e5] to-[#fff1f6] flex items-center justify-center shrink-0">
           <span className="text-xs font-bold text-[#d6336c]">
-            {user?.nickname?.[0] ?? "?"}
+            {review.user?.nickname?.[0] ?? "?"}
           </span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-[#2b1b22]">{user?.nickname ?? "탈퇴한 유저"}</p>
-          <p className="text-xs text-[#8a5165]">{formatDate(review.created_at)}</p>
+          <p className="text-sm font-bold text-[#2b1b22]">
+            {review.user?.nickname ?? "탈퇴한 유저"}
+          </p>
+          <p className="text-xs text-[#8a5165]">{formatDate(review.createdAt)}</p>
         </div>
-        <span className="text-sm text-amber-400 tracking-tight shrink-0">{stars}</span>
       </div>
 
       {keywords.length > 0 && (
