@@ -1,18 +1,26 @@
-export type Award = {
-  award_id: number;
-  name: string;
-  date: string;
-};
+export type AwardPlace = {
+  id: string
+  name: string
+  classification: string | null
+  img_url: string | null
+}
+
+export type AwardResult = {
+  id: string
+  rank: number | null
+  count: number
+  place: AwardPlace
+}
 
 export type AwardCategory = {
-  id: number;
-  award_id: number;
-  name: string;
-};
+  id: string
+  name: string | null
+  results: AwardResult[]
+}
 
-export type AwardRes = {
-  award_category_id: number;
-  place_id: number;
-  count: number;
-  rank: number;
-};
+export type AwardData = {
+  id: string
+  name: string
+  year: number
+  categories: AwardCategory[]
+}
