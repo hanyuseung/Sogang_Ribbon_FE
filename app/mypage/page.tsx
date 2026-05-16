@@ -34,6 +34,7 @@ export default function MyPage() {
   const router = useRouter();
   const [places, setPlaces] = useState<Place[]>([]);
   const [myReviews, setMyReviews] = useState<UserReview[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/places")
@@ -43,12 +44,16 @@ export default function MyPage() {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
+    setReviewsLoading(true);
     fetch(`/api/reviews?userId=${user.id}`)
       .then((r) => r.json())
-      .then(setMyReviews)
-      .catch(() => {});
-  }, [user]);
+      .then((data) => {
+        if (Array.isArray(data)) setMyReviews(data);
+      })
+      .catch(console.error)
+      .finally(() => setReviewsLoading(false));
+  }, [user?.id]);
 
   if (isLoading) {
     return (
@@ -150,7 +155,9 @@ export default function MyPage() {
               <span className="text-[#d6336c]">{myReviews.length}</span>
             </h2>
           </div>
-          {myReviews.length === 0 ? (
+          {reviewsLoading ? (
+            <p className="text-sm text-[#7a5965] text-center py-8">불러오는 중...</p>
+          ) : myReviews.length === 0 ? (
             <p className="text-sm text-[#7a5965] text-center py-8">아직 작성한 리뷰가 없어요</p>
           ) : (
             <ul className="divide-y divide-[#f3d5df]">
