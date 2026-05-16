@@ -13,7 +13,6 @@ const SORT_OPTIONS: SortOption[] = ["거리순", "리본별", "가나다순"];
 interface Props {
   places: Place[];
   selectedPlaceId?: string | null;
-  userLocation: { lat: number; lng: number } | null;
   keywords: DbKeyword[];
   selectedKeywords: string[];
   onToggleKeyword: (name: string) => void;
@@ -22,13 +21,20 @@ interface Props {
 export default function PlaceListWithSort({
   places,
   selectedPlaceId,
-  userLocation,
   keywords,
   selectedKeywords,
   onToggleKeyword,
 }: Props) {
   const [sort, setSort] = useState<SortOption>("거리순");
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => {}
+    );
+  }, []);
 
   useEffect(() => {
     if (selectedPlaceId == null) return;
