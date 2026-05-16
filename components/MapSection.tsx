@@ -9,17 +9,9 @@ import PlaceListWithSort from "@/components/PlaceListWithSort";
 export default function MapSection({ places }: { places: Place[] }) {
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [keywords, setKeywords] = useState<DbKeyword[]>([]);
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      () => {}
-    );
-  }, []);
 
   useEffect(() => {
     fetch("/api/keywords")
@@ -71,7 +63,6 @@ export default function MapSection({ places }: { places: Place[] }) {
       <PlaceListWithSort
         places={searchFiltered}
         selectedPlaceId={selectedPlaceId}
-        userLocation={userLocation}
         keywords={keywords}
         selectedKeywords={selectedKeywords}
         onToggleKeyword={toggleKeyword}
