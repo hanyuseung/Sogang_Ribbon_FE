@@ -4,8 +4,8 @@ import { usePathname } from "next/navigation";
 import Header from "./Header";
 
 const SIMPLE_TITLE: Record<string, string> = {
-  "/gacha": "메뉴 뽑기",
-  "/community": "커뮤니티",
+  "/gacha": "오늘 뭐먹지",
+  "/award": "어워드",
   "/mypage": "마이페이지",
 };
 

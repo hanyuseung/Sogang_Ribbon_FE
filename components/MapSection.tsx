@@ -1,48 +1,38 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Place } from "@/types/place";
-import { DbKeyword } from "@/types/keyword";
 import MapPlaceholder from "@/components/MapPlaceholder";
-import PlaceListWithSort from "@/components/PlaceListWithSort";
+import PlaceListWithSort, { RibbonFilter } from "@/components/PlaceListWithSort";
 
-export default function MapSection({ places }: { places: Place[] }) {
+export default function MapSection({
+  places,
+  initialRibbonFilter,
+}: {
+  places: Place[];
+  initialRibbonFilter?: RibbonFilter;
+}) {
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const [keywords, setKeywords] = useState<DbKeyword[]>([]);
-  const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    fetch("/api/keywords")
-      .then((r) => r.json())
-      .then(setKeywords)
-      .catch(() => {});
-  }, []);
-
-  const toggleKeyword = (name: string) => {
-    setSelectedKeywords((prev) =>
-      prev.includes(name) ? prev.filter((k) => k !== name) : [...prev, name]
-    );
-  };
+  const [ribbonFilter, setRibbonFilter] = useState<RibbonFilter>(initialRibbonFilter ?? null);
 
   const classificationFiltered = activeFilter
     ? places.filter((p) => p.classification === activeFilter)
     : places;
 
-  const keywordFiltered =
-    selectedKeywords.length === 0
-      ? classificationFiltered
-      : classificationFiltered.filter((p) =>
-          selectedKeywords.every((kw) => p.keywords?.some((pk) => pk.name === kw))
-        );
-
   const searchFiltered =
     searchQuery.trim() === ""
-      ? keywordFiltered
-      : keywordFiltered.filter((p) =>
+      ? classificationFiltered
+      : classificationFiltered.filter((p) =>
           p.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
         );
+
+  const ribbonFiltered =
+    ribbonFilter === "cardinal" ? searchFiltered.filter((p) => (p.ribbon_cardinal ?? 0) > 0) :
+    ribbonFilter === "deepred"  ? searchFiltered.filter((p) => (p.ribbon_deepred  ?? 0) > 0) :
+    ribbonFilter === "pink"     ? searchFiltered.filter((p) => (p.ribbon_pink     ?? 0) > 0) :
+    searchFiltered;
 
   return (
     <div>
@@ -54,18 +44,17 @@ export default function MapSection({ places }: { places: Place[] }) {
         placeholder="식당명 검색"
       />
       <MapPlaceholder
-        places={searchFiltered}
+        places={ribbonFiltered}
         selectedPlaceId={selectedPlaceId}
         onMarkerClick={setSelectedPlaceId}
         activeFilter={activeFilter}
         onFilterChange={setActiveFilter}
       />
       <PlaceListWithSort
-        places={searchFiltered}
+        places={ribbonFiltered}
         selectedPlaceId={selectedPlaceId}
-        keywords={keywords}
-        selectedKeywords={selectedKeywords}
-        onToggleKeyword={toggleKeyword}
+        ribbonFilter={ribbonFilter}
+        onRibbonFilterChange={setRibbonFilter}
       />
     </div>
   );

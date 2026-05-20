@@ -2,58 +2,12 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-import { useEffect, useState } from "react";
 import { ChevronRight, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Emblem, UserEmblem } from "@/types/emblem";
-import { Place } from "@/types/place";
-import { PlaceBookmark } from "@/types/bookmark";
-import { UserReview } from "@/services/review";
-import emblemsData from "@/lib/emblem_dummy.json";
-import userEmblemsData from "@/lib/user_emblem_dummy.json";
-import bookmarksData from "@/lib/place_bookmark_dummy.json";
-
-const EMBLEMS = emblemsData as Emblem[];
-
-const EMBLEM_STYLE: Record<string, { bar: string; label: string }> = {
-  bronze:   { bar: "bg-amber-400",  label: "브론즈" },
-  silver:   { bar: "bg-zinc-400",   label: "실버" },
-  gold:     { bar: "bg-yellow-400", label: "골드" },
-  platinum: { bar: "bg-sky-400",    label: "플래티넘" },
-  diamond:  { bar: "bg-blue-400",   label: "다이아몬드" },
-};
-
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
-}
 
 export default function MyPage() {
   const { user, logout, isLoading } = useAuth();
   const router = useRouter();
-  const [places, setPlaces] = useState<Place[]>([]);
-  const [myReviews, setMyReviews] = useState<UserReview[]>([]);
-  const [reviewsLoading, setReviewsLoading] = useState(false);
-
-  useEffect(() => {
-    fetch("/api/places")
-      .then((r) => r.json())
-      .then(setPlaces)
-      .catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    if (!user?.id) return;
-    setReviewsLoading(true);
-    fetch(`/api/reviews?userId=${user.id}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data)) setMyReviews(data);
-      })
-      .catch(console.error)
-      .finally(() => setReviewsLoading(false));
-  }, [user?.id]);
 
   if (isLoading) {
     return (
@@ -81,23 +35,6 @@ export default function MyPage() {
     );
   }
 
-  const myEmblemIds = (userEmblemsData as UserEmblem[])
-    .filter((ue) => String(ue.userid) === user.id)
-    .map((ue) => ue.emblemid);
-  const currentEmblem = EMBLEMS.filter((e) => myEmblemIds.includes(e.emblem_id))
-    .sort((a, b) => b.tier_order - a.tier_order)[0];
-  const nextEmblem = EMBLEMS.find((e) => e.tier_order === (currentEmblem?.tier_order ?? 0) + 1);
-  const progress = nextEmblem
-    ? Math.min(user.review_cnt / nextEmblem.review_threshold, 1)
-    : 1;
-
-  const myBookmarks = (bookmarksData as PlaceBookmark[]).filter((b) => String(b.userid) === user.id);
-  const bookmarkedPlaces = myBookmarks
-    .map((b) => places.find((p) => p.id === String(b.place_id)))
-    .filter((p): p is Place => !!p);
-
-  const emblemStyle = currentEmblem ? EMBLEM_STYLE[currentEmblem.name] : null;
-
   const handleLogout = () => {
     logout();
     router.push("/");
@@ -113,124 +50,18 @@ export default function MyPage() {
           </div>
           <h1 className="text-lg font-bold text-[#2b1b22]">{user.nickname}</h1>
           <p className="text-sm text-[#7a5965] mt-0.5">{user.email}</p>
-          <p className="text-sm font-bold text-[#d6336c] mt-2">리뷰 {user.review_cnt}개</p>
         </div>
 
-        {/* 리본 등급 */}
-        {currentEmblem && emblemStyle && (
-          <div className="bg-white mt-2 px-5 py-5 border-b border-[#f3d5df]">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-[#2b1b22]">나의 리본 등급</h2>
-              <span className="text-xs font-black px-[9px] py-1 rounded-full bg-[#ffe3ec] text-[#d6336c]">
-                {emblemStyle.label}
-              </span>
-            </div>
-            <div className="w-full h-2 bg-[#f3d5df] rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all ${emblemStyle.bar}`}
-                style={{ width: `${progress * 100}%` }}
-              />
-            </div>
-            <p className="text-xs text-[#7a5965] mt-2">
-              {nextEmblem ? (
-                <>
-                  {EMBLEM_STYLE[nextEmblem.name]?.label ?? nextEmblem.name}까지{" "}
-                  <span className="font-bold text-[#2b1b22]">
-                    {nextEmblem.review_threshold - user.review_cnt}개
-                  </span>{" "}
-                  남았어요
-                </>
-              ) : (
-                "최고 등급이에요 🎉"
-              )}
-            </p>
-          </div>
-        )}
-
-        {/* 내 리뷰 */}
-        <div className="bg-white mt-2 border-b border-[#f3d5df]">
-          <div className="px-5 pt-5 pb-3 flex items-center justify-between">
-            <h2 className="text-sm font-bold text-[#2b1b22]">
-              내 리뷰{" "}
-              <span className="text-[#d6336c]">{myReviews.length}</span>
-            </h2>
-          </div>
-          {reviewsLoading ? (
-            <p className="text-sm text-[#7a5965] text-center py-8">불러오는 중...</p>
-          ) : myReviews.length === 0 ? (
-            <p className="text-sm text-[#7a5965] text-center py-8">아직 작성한 리뷰가 없어요</p>
-          ) : (
-            <ul className="divide-y divide-[#f3d5df]">
-              {myReviews.map((review) => {
-                const reviewKeywords = review.keywords
-                  .map((rk) => rk.keyword.name)
-                  .filter((n): n is string => !!n);
-                return (
-                  <li key={review.id}>
-                    <Link
-                      href={`/review/new?reviewId=${review.id}`}
-                      className="flex items-start gap-3 px-5 py-4 hover:bg-[#fff8fb] transition-colors"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-bold text-[#2b1b22] text-sm truncate">
-                            {review.place?.name ?? "알 수 없는 식당"}
-                          </span>
-                        </div>
-                        {reviewKeywords.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mb-1.5">
-                            {reviewKeywords.map((kw) => (
-                              <span
-                                key={kw}
-                                className="text-xs text-[#d6336c] bg-[#ffe3ec] px-[9px] py-0.5 rounded-full font-black"
-                              >
-                                {kw}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                        <p className="text-xs text-[#7a5965] truncate">{review.content}</p>
-                        <p className="text-xs text-[#8a5165] mt-1">{formatDate(review.createdAt.toString())}</p>
-                      </div>
-                      <ChevronRight className="size-4 text-[#d6336c] shrink-0 mt-0.5" />
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
+        {/* 메뉴 */}
+        <div className="bg-white mt-2">
+          <Link
+            href="/mypage/bookmarks"
+            className="flex items-center justify-between px-5 py-4 border-b border-[#f3d5df] hover:bg-[#fff8fb] transition-colors"
+          >
+            <span className="text-sm font-bold text-[#2b1b22]">북마크</span>
+            <ChevronRight className="size-4 text-[#d6336c]" />
+          </Link>
         </div>
-
-        {/* 저장한 식당 */}
-        {bookmarkedPlaces.length > 0 && (
-          <div className="bg-white mt-2 border-b border-[#f3d5df]">
-            <div className="px-5 pt-5 pb-3">
-              <h2 className="text-sm font-bold text-[#2b1b22]">
-                저장한 식당{" "}
-                <span className="text-[#d6336c]">{bookmarkedPlaces.length}</span>
-              </h2>
-            </div>
-            <ul className="divide-y divide-[#f3d5df]">
-              {bookmarkedPlaces.map((place) => (
-                <li key={place.id}>
-                  <Link
-                    href={`/place/${place.id}`}
-                    className="flex items-center gap-3 px-5 py-4 hover:bg-[#fff8fb] transition-colors"
-                  >
-                    <div className="size-10 rounded-[14px] bg-gradient-to-br from-[#ffd6e5] to-[#fff1f6] flex items-center justify-center shrink-0">
-                      <span className="text-sm font-black text-[#d6336c]">{place.name[0]}</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-[#2b1b22] truncate">{place.name}</p>
-                      <p className="text-xs text-[#7a5965]">{place.classification}</p>
-                    </div>
-                    <ChevronRight className="size-4 text-[#d6336c] shrink-0" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
 
         {/* 로그아웃 */}
         <div className="mt-2 bg-white">

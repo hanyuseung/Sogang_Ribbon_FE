@@ -2,28 +2,33 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Place } from "@/types/place";
-import { DbKeyword } from "@/types/keyword";
 import PlaceCard from "@/components/PlaceCard";
 import { sortByDistance, sortByRibbon, sortByName, SOGANG_CENTER } from "@/lib/sort_functions";
 
 type SortOption = "거리순" | "리본별" | "가나다순";
+export type RibbonFilter = "cardinal" | "deepred" | "pink" | null;
 
 const SORT_OPTIONS: SortOption[] = ["거리순", "리본별", "가나다순"];
+
+const RIBBON_FILTERS: { value: RibbonFilter; label: string }[] = [
+  { value: null,       label: "전체" },
+  { value: "cardinal", label: "카디널" },
+  { value: "deepred",  label: "딥레드" },
+  { value: "pink",     label: "핑크" },
+];
 
 interface Props {
   places: Place[];
   selectedPlaceId?: string | null;
-  keywords: DbKeyword[];
-  selectedKeywords: string[];
-  onToggleKeyword: (name: string) => void;
+  ribbonFilter: RibbonFilter;
+  onRibbonFilterChange: (f: RibbonFilter) => void;
 }
 
 export default function PlaceListWithSort({
   places,
   selectedPlaceId,
-  keywords,
-  selectedKeywords,
-  onToggleKeyword,
+  ribbonFilter,
+  onRibbonFilterChange,
 }: Props) {
   const [sort, setSort] = useState<SortOption>("거리순");
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -49,7 +54,8 @@ export default function PlaceListWithSort({
 
   return (
     <div className="pb-8">
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-[10px] no-scrollbar">
+      {/* 정렬 */}
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-2 no-scrollbar">
         {SORT_OPTIONS.map((option) => (
           <button
             key={option}
@@ -63,22 +69,23 @@ export default function PlaceListWithSort({
             {option}
           </button>
         ))}
-        {keywords.map((kw) => {
-          const isSelected = selectedKeywords.includes(kw.name ?? "");
-          return (
-            <button
-              key={kw.id}
-              onClick={() => onToggleKeyword(kw.name ?? "")}
-              className={`flex-none px-[13px] py-[9px] rounded-full text-[13px] font-black border transition-colors ${
-                isSelected
-                  ? "bg-[#d6336c] text-white border-[#d6336c]"
-                  : "bg-white text-[#d6336c] border-[#f0b6c9]"
-              }`}
-            >
-              {kw.name}
-            </button>
-          );
-        })}
+      </div>
+
+      {/* 리본 필터 */}
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-[10px] no-scrollbar">
+        {RIBBON_FILTERS.map(({ value, label }) => (
+          <button
+            key={label}
+            onClick={() => onRibbonFilterChange(value)}
+            className={`flex-none px-[13px] py-[9px] rounded-full text-[13px] font-black border transition-colors ${
+              ribbonFilter === value
+                ? "bg-[#d6336c] text-white border-[#d6336c]"
+                : "bg-white text-[#d6336c] border-[#f0b6c9]"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       <div className="flex flex-col gap-3 w-full px-4">

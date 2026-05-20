@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { containsProfanity } from "@/lib/profanity";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -16,8 +17,8 @@ export default function SignupPage() {
     e.preventDefault();
     setError("");
 
-    if (!email.endsWith("@sogang.ac.kr")) {
-      setError("서강대학교 이메일(@sogang.ac.kr)만 가입할 수 있어요.");
+    if (containsProfanity(nickname)) {
+      setError("닉네임에 사용할 수 없는 단어가 포함되어 있어요.");
       return;
     }
     if (password.length < 6) {
@@ -66,7 +67,7 @@ export default function SignupPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="text-3xl font-black text-[#d6336c] mb-1">🎀 서강리본</div>
-          <p className="text-sm text-[#7a5965]">서강대 이메일로 가입해 주세요</p>
+          <p className="text-sm text-[#7a5965]">이메일로 가입해 주세요</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-sm border border-[#f3d5df] flex flex-col gap-4">
@@ -83,12 +84,12 @@ export default function SignupPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-[#2b1b22]">서강대 이메일</label>
+            <label className="text-xs font-bold text-[#2b1b22]">이메일</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="example@sogang.ac.kr"
+              placeholder="example@email.com"
               required
               className="w-full px-4 py-3 rounded-xl border border-[#f3d5df] bg-[#fff8fb] text-sm text-[#2b1b22] placeholder-[#c4a0b0] focus:outline-none focus:border-[#d6336c] transition-colors"
             />
