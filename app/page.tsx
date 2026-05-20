@@ -43,12 +43,12 @@ export default function HomePage() {
           </div>
         </Link>
 
-        <Link href="/gacha" className="block mt-[10px]">
-        <div className="mx-2 my-4 p-[22px] rounded-[28px] bg-gradient-to-br from-[#ffd6e5] to-white shadow-[0_18px_40px_rgba(214,51,108,0.16)]">
-          <span className="inline-block text-[#d6336c] text-[13px] font-black mb-2">오늘의 추천</span>
-          <h3 className="text-2xl font-bold mb-2">밥약하기 좋은 곳</h3>
-          <p className="text-[#765260] text-sm">분위기 좋아요 · 가성비 좋아요 · 친절해요</p>
-        </div>
+        <Link href="/map?ribbon=cardinal" className="block mt-[10px]">
+          <div className="mx-2 my-4 p-[22px] rounded-[28px] bg-gradient-to-br from-[#ffd6e5] to-white shadow-[0_18px_40px_rgba(214,51,108,0.16)]">
+            <span className="inline-block text-[#d6336c] text-[13px] font-black mb-2">카디널 리본</span>
+            <h3 className="text-2xl font-bold mb-2">밥약하기 좋은 곳</h3>
+            <p className="text-[#765260] text-sm">카디널 리본을 받은 밥약 맛집 모음</p>
+          </div>
         </Link>
 
         

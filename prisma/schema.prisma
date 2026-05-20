@@ -15,10 +15,7 @@ model User {
   nickname   String?
   password   String?
   profileUrl String?  @map("profile_url")
-  reviewCnt  BigInt   @default(0) @map("review_cnt")
-
-  reviews    Review[]
-  emblems    UserEmblem[]
+  bookmarks  PlaceBookmark[]
 
   @@map("user")
 }
@@ -35,99 +32,22 @@ model Place {
   ribbonDeeped   Int?    @map("ribbon_deepred")
   ribbonPink     Int?    @map("ribbon_pink")
 
-  reviews      Review[]
-  keywords     PlaceKeyword[]
   awardResults AwardRes[]
+  bookmarks    PlaceBookmark[]
 
   @@map("place")
 }
 
-model Review {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now()) @map("created_at")
-  content   String?
-  rating    Int
-  isDeleted Boolean  @default(false) @map("is_deleted")
-  placeId   String?  @map("place_id")
-  userId    String   @map("user_id")
+model PlaceBookmark {
+  id      String @id @default(uuid())
+  userId  String @map("user_id")
+  placeId String @map("place_id")
 
-  place    Place?          @relation(fields: [placeId], references: [id])
-  user     User            @relation(fields: [userId], references: [id])
-  images   ReviewImage[]
-  keywords ReviewKeyword[]
+  user  User  @relation(fields: [userId], references: [id])
+  place Place @relation(fields: [placeId], references: [id])
 
-  @@map("review")
-}
-
-model ReviewImage {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now()) @map("created_at")
-  imgUrl    String?  @map("img_url")
-  sortOrder Int?     @map("sort_order")
-  reviewId  String   @map("review_id")
-
-  review    Review   @relation(fields: [reviewId], references: [id])
-
-  @@map("review_images")
-}
-
-model ReviewKeyword {
-  id        String  @id @default(uuid())
-  reviewId  String  @map("review_id")
-  keywordId String  @map("keyword_id")
-
-  review    Review  @relation(fields: [reviewId], references: [id])
-  keyword   Keyword @relation(fields: [keywordId], references: [id])
-
-  @@map("review_keyword")
-}
-
-model Keyword {
-  id    String @id @default(uuid())
-  name  String?
-  order Int?
-
-  placeKeywords  PlaceKeyword[]
-  reviewKeywords ReviewKeyword[]
-
-  @@map("keyword")
-}
-
-model PlaceKeyword {
-  id        String  @id @default(uuid())
-  placeId   String  @map("place_id")
-  keywordId String  @map("keyword_id")
-  count     BigInt  @default(0)
-
-  place     Place   @relation(fields: [placeId], references: [id])
-  keyword   Keyword @relation(fields: [keywordId], references: [id])
-
-  @@map("place_keyword")
-}
-
-model Emblem {
-  id              String  @id @default(uuid())
-  name            String?
-  iconUrl         String? @map("icon_url")
-  tierOrder       Int?    @map("tier_order")
-  reviewThreshold BigInt? @map("review_threshold")
-  type            String?
-
-  userEmblems     UserEmblem[]
-
-  @@map("emblem")
-}
-
-model UserEmblem {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now()) @map("created_at")
-  userId    String   @map("user_id")
-  emblemId  String   @map("emblem_id")
-
-  user    User   @relation(fields: [userId], references: [id])
-  emblem  Emblem @relation(fields: [emblemId], references: [id])
-
-  @@map("user_emblem")
+  @@unique([userId, placeId])
+  @@map("place_bookmark")
 }
 
 model Award {
@@ -155,8 +75,8 @@ model AwardRes {
   id              String  @id @default(uuid())
   awardCategoryId String  @map("award_category_id")
   placeId         String  @map("place_id")
-  count           BigInt  @default(0)
   rank            Int?
+  description     String?
 
   awardCategory   AwardCategory @relation(fields: [awardCategoryId], references: [id])
   place           Place         @relation(fields: [placeId], references: [id])

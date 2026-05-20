@@ -9,6 +9,7 @@ type AuthContextType = {
   user: User | null;
   isLoading: boolean;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -27,17 +28,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         authUser.email?.split("@")[0] ??
         "",
       profile_url: "",
-      review_cnt: 0,
     });
     setIsLoading(false);
 
-    // DB에서 nickname / profile_url / review_cnt 보강 (비동기)
-    const { data: profile } = await supabase
-      .from("user")
-      .select("nickname, profile_url, review_cnt")
-      .eq("id", authUser.id)
-      .single();
-    if (profile) {
+    // Prisma API로 nickname / profile_url / review_cnt 보강 (비동기)
+    const res = await fetch(`/api/me?userId=${authUser.id}`);
+    if (res.ok) {
+      const profile = await res.json();
       setUser((prev) => (prev ? { ...prev, ...profile } : null));
     }
   }
@@ -65,12 +62,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  const refreshUser = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) await fetchUser(session.user);
+  };
+
   const logout = async () => {
     await supabase.auth.signOut();
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -8,7 +8,7 @@ export type AwardPlace = {
 export type AwardResult = {
   id: string
   rank: number | null
-  count: number
+  description: string | null
   place: AwardPlace
 }
 

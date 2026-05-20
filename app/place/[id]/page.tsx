@@ -35,10 +35,7 @@ export default async function PlaceDetailPage({
   const place = await getPlaceById(id);
   if (!place) notFound();
 
-  const placeKeywords = place.keywords ?? [];
-  const maxCount = placeKeywords[0]?.count ?? 1;
   const topRibbon = getTopRibbon(place);
-  const placeId = id;
 
   return (
     <div className="min-h-full bg-[#fff8fb]">
@@ -75,57 +72,16 @@ export default async function PlaceDetailPage({
 
           <div className="flex items-center gap-3 my-2">
             <h2 className="text-[27px] font-bold">{place.name}</h2>
-            <Link
-              href={`/place/${placeId}/reviews`}
-              className="shrink-0 px-[11px] py-1 rounded-full bg-[#fff1f6] text-[#d6336c] text-xs font-black"
-            >
-              전체 리뷰
-            </Link>
           </div>
           <p className="text-[#6f4c59] text-sm mb-4">{place.classification}</p>
 
           {/* 액션 버튼 */}
-          <div className="grid grid-cols-2 gap-[10px] mb-[18px]">
-            <button className="min-h-[46px] rounded-full bg-[#fff1f6] text-[#d6336c] text-sm font-black">
+          <div className="mb-[18px]">
+            <button className="w-full min-h-[46px] rounded-full bg-[#fff1f6] text-[#d6336c] text-sm font-black">
               ♡ 북마크
             </button>
-            <Link
-              href={`/review/new?placeId=${placeId}`}
-              className="inline-flex items-center justify-center min-h-[46px] rounded-full bg-[#d6336c] text-white text-sm font-black"
-            >
-              리뷰 쓰기
-            </Link>
           </div>
 
-          {/* 키워드 리뷰 지수 */}
-          {placeKeywords.length > 0 && (
-            <div className="p-[18px] rounded-[22px] bg-[#fff8fb]">
-              <div className="flex items-center justify-between mb-[14px]">
-                <h3 className="text-[18px] font-bold">키워드 리뷰 지수</h3>
-                <Link
-                  href={`/place/${placeId}/reviews`}
-                  className="text-sm font-black text-[#d6336c]"
-                >
-                  상세 리뷰
-                </Link>
-              </div>
-
-              {placeKeywords.map((pk) => {
-                const pct = Math.round((pk.count / maxCount) * 100);
-                return (
-                  <div key={pk.name} className="mb-3 last:mb-0">
-                    <span className="block text-[13px] text-[#5c3b47] mb-1.5">{pk.name}</span>
-                    <div className="h-[10px] bg-[#f3d5df] rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-[#d6336c] rounded-full"
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
         </div>
       </section>
     </div>

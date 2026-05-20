@@ -16,7 +16,7 @@ export default function Header() {
           href="/mypage"
           className="px-[13px] py-2 rounded-full bg-[#2b1b22] text-white text-[13px] font-bold"
         >
-          {user.nickname}
+          마이페이지
         </Link>
       ) : (
         <Link

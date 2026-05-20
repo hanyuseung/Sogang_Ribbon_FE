@@ -1,7 +1,0 @@
-[
-  { "emblem_id": 1, "name": "bronze", "icon_url": "", "tier_order": 1, "review_threshold": 1, "type": "review_count" },
-  { "emblem_id": 2, "name": "silver", "icon_url": "", "tier_order": 2, "review_threshold": 5, "type": "review_count" },
-  { "emblem_id": 3, "name": "gold", "icon_url": "", "tier_order": 3, "review_threshold": 10, "type": "review_count" },
-  { "emblem_id": 4, "name": "platinum", "icon_url": "", "tier_order": 4, "review_threshold": 20, "type": "review_count" },
-  { "emblem_id": 5, "name": "diamond", "icon_url": "", "tier_order": 5, "review_threshold": 50, "type": "review_count" }
-]

@@ -130,9 +130,11 @@ function GoldCard({ result }: { result: AwardResult }) {
                 {result.place.classification}
               </span>
             )}
-            <span className="text-[12px] text-[#a08030] font-black ml-auto">
-              {result.count.toLocaleString()}표
-            </span>
+            {result.description && (
+              <span className="text-[12px] text-[#a08030] font-black ml-auto">
+                {result.description}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -198,9 +200,11 @@ function SilverBronzeCard({
               {result.place.classification}
             </p>
           )}
-          <p className={`text-[11px] font-black mt-1 ${config.countColor}`}>
-            {result.count.toLocaleString()}표
-          </p>
+          {result.description && (
+            <p className={`text-[11px] font-black mt-1 ${config.countColor}`}>
+              {result.description}
+            </p>
+          )}
         </div>
       </div>
     </Link>
