@@ -4,22 +4,70 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Place } from "@/types/place";
-import { PlaceBookmark } from "@/types/bookmark";
-import bookmarksData from "@/lib/place_bookmark_dummy.json";
+import { supabase } from "@/lib/supabase";
+
+type BookmarkPlace = {
+  id: string;
+  name: string;
+  classification: string | null;
+};
+
+type BookmarkResponse = {
+  id: string;
+  place: BookmarkPlace;
+};
 
 export default function BookmarksPage() {
   const { user, isLoading } = useAuth();
-  const [places, setPlaces] = useState<Place[]>([]);
+  const [bookmarkedPlaces, setBookmarkedPlaces] = useState<BookmarkPlace[]>([]);
+  const [isBookmarksLoading, setIsBookmarksLoading] = useState(false);
 
   useEffect(() => {
-    fetch("/api/places")
-      .then((r) => r.json())
-      .then(setPlaces)
-      .catch(() => {});
-  }, []);
+    let ignore = false;
 
-  if (isLoading) {
+    async function fetchBookmarks() {
+      if (!user) {
+        setBookmarkedPlaces([]);
+        return;
+      }
+
+      setIsBookmarksLoading(true);
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        if (!ignore) {
+          setBookmarkedPlaces([]);
+          setIsBookmarksLoading(false);
+        }
+        return;
+      }
+
+      const res = await fetch("/api/bookmarks", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+
+      if (!ignore) {
+        if (res.ok) {
+          const bookmarks = (await res.json()) as BookmarkResponse[];
+          setBookmarkedPlaces(bookmarks.map((bookmark) => bookmark.place));
+        } else {
+          setBookmarkedPlaces([]);
+        }
+        setIsBookmarksLoading(false);
+      }
+    }
+
+    fetchBookmarks();
+
+    return () => {
+      ignore = true;
+    };
+  }, [user]);
+
+  if (isLoading || isBookmarksLoading) {
     return (
       <div className="min-h-full bg-[#fff8fb] flex items-center justify-center">
         <p className="text-sm text-[#7a5965]">로딩 중...</p>
@@ -44,11 +92,6 @@ export default function BookmarksPage() {
       </div>
     );
   }
-
-  const myBookmarks = (bookmarksData as PlaceBookmark[]).filter((b) => String(b.userid) === user.id);
-  const bookmarkedPlaces = myBookmarks
-    .map((b) => places.find((p) => p.id === String(b.place_id)))
-    .filter((p): p is Place => !!p);
 
   return (
     <div className="min-h-full bg-[#fff8fb]">

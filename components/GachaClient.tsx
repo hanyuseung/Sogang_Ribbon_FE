@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Place } from "@/types/place";
 import { RibbonFilter } from "@/components/PlaceListWithSort";
 
-const CATEGORIES = ["전체", "한식", "중식", "일식", "양식"];
+const CATEGORIES = ["전체", "한식", "일식", "양식", "아시안", "카페"];
 const FOOD_ICONS = ["🍜", "🍱", "🍣", "🥩", "🍛", "🍝"];
 
 const RIBBON_FILTERS: { value: RibbonFilter; label: string }[] = [
@@ -49,7 +49,7 @@ export default function GachaClient({ places }: { places: Place[] }) {
 
     const timeout = setTimeout(() => {
       const random = pool[Math.floor(Math.random() * pool.length)];
-      setResult(random ?? null);
+setResult(random ?? null);
       setPicked(true);
       setSpinning(false);
     }, 3000);
@@ -125,21 +125,33 @@ export default function GachaClient({ places }: { places: Place[] }) {
           <p className="text-sm font-black text-[#d6336c]">뽑는 중...</p>
         </div>
       ) : picked && result ? (
-        <Link href={`/place/${result.id}`} className="block rounded-[22px] overflow-hidden bg-gradient-to-br from-[#ffd6e5] to-[#fff8fb] active:opacity-80 transition-opacity">
-          <div className="w-full h-[160px] bg-gradient-to-br from-[#ffd6e5] to-[#fff1f6] flex items-center justify-center overflow-hidden">
-            {result.img_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={result.img_url} alt={result.name} className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-4xl">🍽️</span>
-            )}
-          </div>
-          <div className="p-5 text-center">
-            <h3 className="text-[22px] font-bold mb-2">{result.name}</h3>
-            <p className="text-sm text-[#765260]">{result.classification ?? ""}</p>
-            <p className="text-xs text-[#d6336c] font-black mt-3">자세히 보기 →</p>
-          </div>
-        </Link>
+        <Link
+            href={`/place/${result.id}`}
+            className="block rounded-[22px] overflow-hidden bg-gradient-to-br from-[#ffd6e5] to-[#fff8fb] active:opacity-80 transition-opacity"
+          >
+            <div className="relative w-full h-[160px] bg-gradient-to-br from-[#ffd6e5] to-[#fff1f6] flex items-center justify-center overflow-hidden">
+              {result.img_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={result.img_url}
+                  alt={result.name}
+                  className="block w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-4xl">🍽️</span>
+              )}
+            </div>
+
+            <div className="relative z-10 p-5 text-center">
+              <h3 className="text-[22px] font-bold mb-2">{result.name}</h3>
+              <p className="text-sm text-[#765260]">
+                {result.classification ?? ""}
+              </p>
+              <p className="text-xs text-[#d6336c] font-black mt-3">
+                자세히 보기 →
+              </p>
+            </div>
+          </Link>
       ) : (
         <div className="p-5 rounded-[22px] bg-gradient-to-br from-[#ffd6e5] to-[#fff8fb]">
           <h3 className="text-[22px] font-bold mb-2">{resultTitle}</h3>

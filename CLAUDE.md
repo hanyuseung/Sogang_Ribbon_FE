@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Sogang Ribbon (서강리본)** is a restaurant discovery and review service for restaurants near Sogang University. Users write reviews with photos and keyword tags; the system awards emblems based on review count and runs annual restaurant awards with voting.
+**Sogang Ribbon (서강리본)** is a restaurant discovery service for restaurants near Sogang University.
 
 ## Tech Stack
 
@@ -79,26 +79,11 @@ CREATE TABLE public.award_res (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   award_category_id uuid NOT NULL,
   place_id uuid NOT NULL,
-  count bigint NOT NULL DEFAULT '0'::bigint,
   rank smallint,
+  description text,
   CONSTRAINT award_res_pkey PRIMARY KEY (id),
   CONSTRAINT award_res_award_category_id_fkey FOREIGN KEY (award_category_id) REFERENCES public.award_category(id),
   CONSTRAINT award_res_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.place(id)
-);
-CREATE TABLE public.emblem (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  name text,
-  icon_url text,
-  tier_order smallint,
-  review_threshold bigint,
-  type text,
-  CONSTRAINT emblem_pkey PRIMARY KEY (id)
-);
-CREATE TABLE public.keyword (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  name text,
-  order smallint,
-  CONSTRAINT keyword_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.place (
   id uuid NOT NULL,
@@ -111,46 +96,18 @@ CREATE TABLE public.place (
   ribbon_cardinal smallint,
   ribbon_deepred smallint,
   ribbon_pink smallint,
+  desc_thumbnail text,
+  desc_detail text,
+  ribbon_type smallint DEFAULT '0'::smallint,
   CONSTRAINT place_pkey PRIMARY KEY (id)
 );
-CREATE TABLE public.place_keyword (
-  place_id uuid NOT NULL,
-  keyword_id uuid NOT NULL,
-  count bigint NOT NULL DEFAULT '0'::bigint,
+CREATE TABLE public.place_bookmark (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
-  CONSTRAINT place_keyword_pkey PRIMARY KEY (id),
-  CONSTRAINT place_keyword_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.place(id),
-  CONSTRAINT place_keyword_keyword_id_fkey FOREIGN KEY (keyword_id) REFERENCES public.keyword(id)
-);
-CREATE TABLE public.review (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  created_at timestamp with time zone NOT NULL DEFAULT now(),
-  content text,
-  rating smallint NOT NULL,
-  is_deleted boolean NOT NULL DEFAULT false,
-  place_id uuid,
   user_id uuid NOT NULL,
-  keywords_id ARRAY,
-  CONSTRAINT review_pkey PRIMARY KEY (id),
-  CONSTRAINT review_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.place(id),
-  CONSTRAINT review_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user(id)
-);
-CREATE TABLE public.review_images (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  created_at timestamp with time zone NOT NULL DEFAULT now(),
-  img_url text,
-  sort_order smallint,
-  review_id uuid NOT NULL,
-  CONSTRAINT review_images_pkey PRIMARY KEY (id),
-  CONSTRAINT review_images_review_id_fkey FOREIGN KEY (review_id) REFERENCES public.review(id)
-);
-CREATE TABLE public.review_keyword (
-  review_id uuid NOT NULL,
-  keyword_id uuid NOT NULL,
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  CONSTRAINT review_keyword_pkey PRIMARY KEY (id),
-  CONSTRAINT review_keyword_review_id_fkey FOREIGN KEY (review_id) REFERENCES public.review(id),
-  CONSTRAINT review_keyword_keyword_id_fkey FOREIGN KEY (keyword_id) REFERENCES public.keyword(id)
+  place_id uuid NOT NULL,
+  CONSTRAINT place_bookmark_pkey PRIMARY KEY (id),
+  CONSTRAINT place_bookmark_place_id_fkey FOREIGN KEY (place_id) REFERENCES public.place(id),
+  CONSTRAINT place_bookmark_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user(id)
 );
 CREATE TABLE public.user (
   id uuid NOT NULL,
@@ -160,30 +117,12 @@ CREATE TABLE public.user (
   nickname text,
   password text,
   profile_url text,
-  review_cnt bigint NOT NULL DEFAULT '0'::bigint,
   CONSTRAINT user_pkey PRIMARY KEY (id)
-);
-CREATE TABLE public.user_emblem (
-  created_at timestamp with time zone NOT NULL DEFAULT now(),
-  user_id uuid NOT NULL,
-  emblem_id uuid NOT NULL,
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  CONSTRAINT user_emblem_pkey PRIMARY KEY (id),
-  CONSTRAINT user_emblem_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user(id),
-  CONSTRAINT user_emblem_emblem_id_fkey FOREIGN KEY (emblem_id) REFERENCES public.emblem(id)
 );
 
 ### Authentication
-Sogang University email verification is the primary login method; social login is also supported. Protected actions (writing reviews, bookmarking) must show a login-prompt modal when accessed unauthenticated.
+Every email & password
 
 ### Map & List
 Display restaurant locations on a Kakao map. List sorting options: distance (PostGIS), ribbon tier, and alphabetical.
 
-### Review & Keyword System
-Reviews consist of text, photos, and up to 3 keywords selected from 8 fixed options:
-밥약하기 좋아요 / 맛이 있어요 / 가성비 좋아요 / 분위기 좋아요 / 친절해요 / 혼자 먹기 좋아요 / 모임장소로 좋아요 / 데이트하기 좋아요
-
-Keywords with higher selection counts must be visually emphasized (size or color). A review guideline/disclaimer must be shown on the review form.
-
-### Gamification
-Users receive tier emblems based on `review_cnt`. When a review is submitted, update `review_cnt` and check emblem thresholds.

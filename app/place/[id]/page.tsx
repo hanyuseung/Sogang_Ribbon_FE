@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getPlaceById } from "@/services/place";
+import PlaceBookmarkButton from "@/components/PlaceBookmarkButton";
 import { Place } from "@/types/place";
 
 type RibbonTier = "cardinal" | "deepred" | "pink" | null;
@@ -65,7 +66,9 @@ export default async function PlaceDetailPage({
         {/* 상세 카드 */}
         <div className="bg-white rounded-[24px] shadow-[0_12px_28px_rgba(80,37,54,0.08)] p-[18px]">
           {topRibbon && (
-            <span className={`inline-block px-[9px] py-1 rounded-full text-[11px] font-black ${RIBBON_CLASS[topRibbon]}`}>
+            <span
+              className={`inline-block px-[9px] py-1 rounded-full text-[11px] font-black ${RIBBON_CLASS[topRibbon]}`}
+            >
               {RIBBON_LABEL[topRibbon]}
             </span>
           )}
@@ -73,15 +76,19 @@ export default async function PlaceDetailPage({
           <div className="flex items-center gap-3 my-2">
             <h2 className="text-[27px] font-bold">{place.name}</h2>
           </div>
-          <p className="text-[#6f4c59] text-sm mb-4">{place.classification}</p>
+
+          <p className="text-[#6f4c59] text-sm">
+            {place.classification}
+          </p>
+
+          {place.desc_detail && (
+            <p className="mt-4 text-[15px] leading-7 text-[#4b313b] whitespace-pre-line">
+              {place.desc_detail}
+            </p>
+          )}
 
           {/* 액션 버튼 */}
-          <div className="mb-[18px]">
-            <button className="w-full min-h-[46px] rounded-full bg-[#fff1f6] text-[#d6336c] text-sm font-black">
-              ♡ 북마크
-            </button>
-          </div>
-
+          <PlaceBookmarkButton placeId={place.id} />
         </div>
       </section>
     </div>

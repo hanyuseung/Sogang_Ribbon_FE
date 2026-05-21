@@ -6,7 +6,7 @@ import { LocateFixed } from "lucide-react";
 import { Place } from "@/types/place";
 
 const SOGANG_CENTER = { lat: 37.551, lng: 126.9394 };
-const FILTER_OPTIONS = ["한식", "중식", "양식", "일식"];
+const FILTER_OPTIONS = ["한식", "일식", "양식", "아시안", "카페"];
 
 interface Props {
   places: Place[];
@@ -24,17 +24,28 @@ export default function MapPlaceholder({ places, selectedPlaceId, onMarkerClick,
   const mapRef = useRef<kakao.maps.Map | null>(null);
 
   function handleMyLocation() {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-        setUserLocation(loc);
-        if (mapRef.current) {
-          mapRef.current.panTo(new window.kakao.maps.LatLng(loc.lat, loc.lng));
-        }
-      },
-      () => {}
-    );
-  }
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const loc = {
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+      };
+
+      setUserLocation(loc);
+
+      if (mapRef.current) {
+        mapRef.current.setLevel(3);
+
+        mapRef.current.panTo(
+          new window.kakao.maps.LatLng(loc.lat, loc.lng)
+        );
+      }
+    },
+    () => {
+      alert("위치 권한을 허용해주세요.");
+    }
+  );
+}
 
   return (
     <div className="relative h-[300px] rounded-[28px] overflow-hidden mb-4">

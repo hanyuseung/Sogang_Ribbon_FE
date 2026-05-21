@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Place } from "@/types/place";
 import MapPlaceholder from "@/components/MapPlaceholder";
 import PlaceListWithSort, { RibbonFilter } from "@/components/PlaceListWithSort";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+
+type BookmarkResponse = {
+  placeId: string;
+};
 
 export default function MapSection({
   places,
@@ -12,10 +18,44 @@ export default function MapSection({
   places: Place[];
   initialRibbonFilter?: RibbonFilter;
 }) {
+  const { user } = useAuth();
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [ribbonFilter, setRibbonFilter] = useState<RibbonFilter>(initialRibbonFilter ?? null);
+  const [bookmarkFilter, setBookmarkFilter] = useState(false);
+  const [bookmarkedPlaceIds, setBookmarkedPlaceIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function fetchBookmarks() {
+      if (!user) {
+        setBookmarkedPlaceIds(new Set());
+        setBookmarkFilter(false);
+        return;
+      }
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const res = await fetch("/api/bookmarks", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (!res.ok || ignore) return;
+
+      const bookmarks = (await res.json()) as BookmarkResponse[];
+      setBookmarkedPlaceIds(new Set(bookmarks.map((bookmark) => bookmark.placeId)));
+    }
+
+    fetchBookmarks();
+
+    return () => {
+      ignore = true;
+    };
+  }, [user]);
 
   const classificationFiltered = activeFilter
     ? places.filter((p) => p.classification === activeFilter)
@@ -34,6 +74,10 @@ export default function MapSection({
     ribbonFilter === "pink"     ? searchFiltered.filter((p) => (p.ribbon_pink     ?? 0) > 0) :
     searchFiltered;
 
+  const bookmarkFiltered = bookmarkFilter
+    ? ribbonFiltered.filter((p) => bookmarkedPlaceIds.has(p.id))
+    : ribbonFiltered;
+
   return (
     <div>
       <input
@@ -44,17 +88,20 @@ export default function MapSection({
         placeholder="식당명 검색"
       />
       <MapPlaceholder
-        places={ribbonFiltered}
+        places={bookmarkFiltered}
         selectedPlaceId={selectedPlaceId}
         onMarkerClick={setSelectedPlaceId}
         activeFilter={activeFilter}
         onFilterChange={setActiveFilter}
       />
       <PlaceListWithSort
-        places={ribbonFiltered}
+        places={bookmarkFiltered}
         selectedPlaceId={selectedPlaceId}
         ribbonFilter={ribbonFilter}
         onRibbonFilterChange={setRibbonFilter}
+        bookmarkFilter={bookmarkFilter}
+        onBookmarkFilterChange={setBookmarkFilter}
+        canUseBookmarkFilter={!!user}
       />
     </div>
   );

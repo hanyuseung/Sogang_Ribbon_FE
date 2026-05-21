@@ -23,7 +23,7 @@ export async function getAwards(): Promise<AwardData[]> {
   return awards.map((award) => ({
     id: award.id,
     name: award.name,
-    year: award.dateStart ? award.dateStart.getFullYear() : 0,
+    dateStart: award.dateStart,
     categories: award.categories.map((cat) => ({
       id: cat.id,
       name: cat.name,

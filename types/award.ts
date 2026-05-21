@@ -1,9 +1,6 @@
-export type AwardPlace = {
-  id: string
-  name: string
-  classification: string | null
-  img_url: string | null
-}
+import { Place } from "@/types/place"
+
+export type AwardPlace = Pick<Place, "id" | "name" | "classification" | "img_url">
 
 export type AwardResult = {
   id: string
@@ -21,6 +18,6 @@ export type AwardCategory = {
 export type AwardData = {
   id: string
   name: string
-  year: number
+  dateStart: Date | null
   categories: AwardCategory[]
 }

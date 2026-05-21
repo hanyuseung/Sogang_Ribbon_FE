@@ -31,6 +31,8 @@ model Place {
   ribbonCardinal Int?    @map("ribbon_cardinal")
   ribbonDeeped   Int?    @map("ribbon_deepred")
   ribbonPink     Int?    @map("ribbon_pink")
+  descThumbnail  String? @map("desc_thumbnail")
+  descDetail     String? @map("desc_detail")
 
   awardResults AwardRes[]
   bookmarks    PlaceBookmark[]

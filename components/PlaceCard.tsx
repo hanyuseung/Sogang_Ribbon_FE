@@ -22,7 +22,13 @@ function getTopRibbon(place: Place): RibbonTier {
   return null;
 }
 
-export default function PlaceCard({ place, isActive }: { place: Place; isActive?: boolean }) {
+export default function PlaceCard({
+  place,
+  isActive,
+}: {
+  place: Place;
+  isActive?: boolean;
+}) {
   const topRibbon = getTopRibbon(place);
 
   return (
@@ -35,7 +41,11 @@ export default function PlaceCard({ place, isActive }: { place: Place; isActive?
       <div className="w-[64px] h-[64px] flex-none rounded-[18px] bg-gradient-to-br from-[#ffd6e5] to-[#fff1f6] flex items-center justify-center overflow-hidden">
         {place.img_url ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={place.img_url} alt={place.name} className="object-cover w-full h-full" />
+          <img
+            src={place.img_url}
+            alt={place.name}
+            className="block object-cover w-full h-full"
+          />
         ) : (
           <span className="text-xs font-black text-[#d6336c]">IMG</span>
         )}
@@ -49,7 +59,17 @@ export default function PlaceCard({ place, isActive }: { place: Place; isActive?
             {RIBBON_LABEL[topRibbon]}
           </span>
         )}
-        <h3 className="text-[17px] font-semibold mt-[5px] mb-0.5 truncate">{place.name}</h3>
+
+        <h3 className="text-[17px] font-semibold mt-[5px] truncate">
+          {place.name}
+        </h3>
+
+        {place.desc_thumbnail && (
+          <p className="mt-1 text-[13px] text-[#765260] line-clamp-1">
+            {place.desc_thumbnail}
+          </p>
+        )}
+
         <span className="inline-block mt-1.5 text-[13px] font-black text-[#d6336c]">
           자세히 보기
         </span>

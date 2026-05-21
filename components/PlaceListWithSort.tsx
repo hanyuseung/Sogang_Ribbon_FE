@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Heart } from "lucide-react";
 import { Place } from "@/types/place";
 import PlaceCard from "@/components/PlaceCard";
 import { sortByDistance, sortByRibbon, sortByName, SOGANG_CENTER } from "@/lib/sort_functions";
@@ -22,6 +23,9 @@ interface Props {
   selectedPlaceId?: string | null;
   ribbonFilter: RibbonFilter;
   onRibbonFilterChange: (f: RibbonFilter) => void;
+  bookmarkFilter: boolean;
+  onBookmarkFilterChange: (active: boolean) => void;
+  canUseBookmarkFilter: boolean;
 }
 
 export default function PlaceListWithSort({
@@ -29,6 +33,9 @@ export default function PlaceListWithSort({
   selectedPlaceId,
   ribbonFilter,
   onRibbonFilterChange,
+  bookmarkFilter,
+  onBookmarkFilterChange,
+  canUseBookmarkFilter,
 }: Props) {
   const [sort, setSort] = useState<SortOption>("거리순");
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -86,6 +93,19 @@ export default function PlaceListWithSort({
             {label}
           </button>
         ))}
+        <button
+          type="button"
+          onClick={() => onBookmarkFilterChange(!bookmarkFilter)}
+          disabled={!canUseBookmarkFilter}
+          className={`flex-none px-[13px] py-[9px] rounded-full text-[13px] font-black border transition-colors inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed ${
+            bookmarkFilter
+              ? "bg-[#d6336c] text-white border-[#d6336c]"
+              : "bg-white text-[#d6336c] border-[#f0b6c9]"
+          }`}
+        >
+          <Heart className="size-3.5" fill={bookmarkFilter ? "currentColor" : "none"} />
+          북마크
+        </button>
       </div>
 
       <div className="flex flex-col gap-3 w-full px-4">
