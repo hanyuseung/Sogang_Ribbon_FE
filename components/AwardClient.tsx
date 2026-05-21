@@ -64,7 +64,7 @@ function YearTabs({
               : "bg-white text-[#d6336c] border-[#f0b6c9]"
           }`}
         >
-          {award.year}년
+          {award.dateStart ? `${award.dateStart.getFullYear()}년` : award.name}
         </button>
       ))}
     </div>

@@ -9,11 +9,14 @@ function mapToPlace(p: PrismaPlace): Place {
     latitude: p.latitude,
     longitude: p.longitude,
     name: p.name,
+    address: p.address ?? null,
     classification: p.classification,
     img_url: p.imgUrl ?? null,
     ribbon_cardinal: p.ribbonCardinal,
     ribbon_deepred: p.ribbonDeeped,
     ribbon_pink: p.ribbonPink,
+    desc_thumbnail: p.descThumbnail ?? null,
+    desc_detail: p.descDetail ?? null,
   }
 }
 
