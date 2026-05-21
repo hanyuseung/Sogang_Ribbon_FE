@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { prisma } from "@/lib/prisma";
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_SECRET_KEY;
+
 function getBearerToken(req: Request) {
   const authHeader = req.headers.get("authorization");
   if (!authHeader?.startsWith("Bearer ")) return null;
@@ -10,12 +14,9 @@ function getBearerToken(req: Request) {
 
 async function getAuthedUserId(req: Request) {
   const token = getBearerToken(req);
-  if (!token) return null;
+  if (!token || !supabaseUrl || !supabaseKey) return null;
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SECRET_KEY!,
-  );
+  const supabase = createClient(supabaseUrl, supabaseKey);
   const {
     data: { user },
     error,
