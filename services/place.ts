@@ -12,6 +12,7 @@ function mapToPlace(p: PrismaPlace): Place {
     address: p.address ?? null,
     classification: p.classification,
     img_url: p.imgUrl ?? null,
+    thumbnail_url: p.thumbnailUrl ?? null,
     ribbon_cardinal: p.ribbonCardinal,
     ribbon_deepred: p.ribbonDeeped,
     ribbon_pink: p.ribbonPink,

@@ -126,6 +126,10 @@ export default function SignupPage() {
             로그인
           </Link>
         </p>
+
+        <p className="mt-5 text-center text-xs leading-5 text-[#9b8b92]">
+          타인에게 불쾌감을 조성하거나, 혐오 표현이 담긴 닉네임은 관리자에 의해 가입이 제한될 수 있습니다.
+        </p>
       </div>
     </div>
   );

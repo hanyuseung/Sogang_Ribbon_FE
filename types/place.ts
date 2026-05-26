@@ -6,6 +6,7 @@ export type Place = {
   address: string | null;
   classification: string | null;
   img_url: string | null;
+  thumbnail_url: string | null;
   ribbon_cardinal: number | null;
   ribbon_deepred: number | null;
   ribbon_pink: number | null;

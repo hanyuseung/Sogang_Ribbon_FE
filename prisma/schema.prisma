@@ -28,6 +28,7 @@ model Place {
   latitude       Float?
   longitude      Float?
   imgUrl         String? @map("img_url")
+  thumbnailUrl   String? @map("thumbnail_url")
   ribbonCardinal Int?    @map("ribbon_cardinal")
   ribbonDeeped   Int?    @map("ribbon_deepred")
   ribbonPink     Int?    @map("ribbon_pink")
