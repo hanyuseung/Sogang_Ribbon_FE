@@ -33,7 +33,7 @@ export default function PlaceCard({
   onSelect?: (id: string) => void;
 }) {
   const topRibbon = getTopRibbon(place);
-  const imageUrl = getSupabaseImageUrl(place.img_url, {
+  const imageUrl = getSupabaseImageUrl(place.thumbnail_url ?? place.img_url, {
     width: 160,
     height: 160,
     quality: 55,
