@@ -14,12 +14,14 @@ type BookmarkResponse = {
 export default function MapSection({
   places,
   initialRibbonFilter,
+  initialSelectedPlaceId,
 }: {
   places: Place[];
   initialRibbonFilter?: RibbonFilter;
+  initialSelectedPlaceId?: string | null;
 }) {
   const { user } = useAuth();
-  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(initialSelectedPlaceId ?? null);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [ribbonFilter, setRibbonFilter] = useState<RibbonFilter>(initialRibbonFilter ?? null);
@@ -102,6 +104,7 @@ export default function MapSection({
         bookmarkFilter={bookmarkFilter}
         onBookmarkFilterChange={setBookmarkFilter}
         canUseBookmarkFilter={!!user}
+        onPlaceSelect={setSelectedPlaceId}
       />
     </div>
   );

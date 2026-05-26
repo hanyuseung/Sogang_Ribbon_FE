@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Place } from "@/types/place";
+import { getSupabaseImageUrl } from "@/lib/supabase-image";
 
 type RibbonTier = "cardinal" | "deepred" | "pink" | null;
 
@@ -25,24 +26,39 @@ function getTopRibbon(place: Place): RibbonTier {
 export default function PlaceCard({
   place,
   isActive,
+  onSelect,
 }: {
   place: Place;
   isActive?: boolean;
+  onSelect?: (id: string) => void;
 }) {
   const topRibbon = getTopRibbon(place);
+  const imageUrl = getSupabaseImageUrl(place.img_url, {
+    width: 160,
+    height: 160,
+    quality: 55,
+  });
 
   return (
-    <Link
-      href={`/place/${place.id}`}
-      className={`flex gap-3 items-center py-2 px-4 rounded-[22px] shadow-[0_10px_24px_rgba(80,37,54,0.07)] transition-colors ${
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => onSelect?.(place.id)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect?.(place.id);
+        }
+      }}
+      className={`flex gap-3 items-center py-2 px-4 rounded-[22px] shadow-[0_10px_24px_rgba(80,37,54,0.07)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#d6336c] ${
         isActive ? "bg-[#fff0f5] ring-2 ring-[#d6336c]" : "bg-white"
       }`}
     >
       <div className="w-[64px] h-[64px] flex-none rounded-[18px] bg-gradient-to-br from-[#ffd6e5] to-[#fff1f6] flex items-center justify-center overflow-hidden">
-        {place.img_url ? (
+        {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={place.img_url}
+            src={imageUrl}
             alt={place.name}
             className="block object-cover w-full h-full"
           />
@@ -70,10 +86,15 @@ export default function PlaceCard({
           </p>
         )}
 
-        <span className="inline-block mt-1.5 text-[13px] font-black text-[#d6336c]">
+        <Link
+          href={`/place/${place.id}`}
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+          className="inline-block mt-1.5 text-[13px] font-black text-[#d6336c]"
+        >
           자세히 보기
-        </span>
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 }

@@ -7,12 +7,14 @@ const VALID_RIBBON = new Set<string>(["cardinal", "deepred", "pink"]);
 export default async function MapPage({
   searchParams,
 }: {
-  searchParams: Promise<{ ribbon?: string }>;
+  searchParams: Promise<{ ribbon?: string; place?: string }>;
 }) {
-  const { ribbon } = await searchParams;
+  const { ribbon, place } = await searchParams;
   const places = await getPlaces();
   const initialRibbonFilter =
     ribbon && VALID_RIBBON.has(ribbon) ? (ribbon as RibbonFilter) : null;
+  const initialSelectedPlaceId =
+    place && places.some((p) => p.id === place) ? place : null;
 
   return (
     <>
@@ -22,7 +24,11 @@ export default async function MapPage({
           <h2 className="text-2xl font-bold tracking-[-0.8px]">지도에서 식당 찾기</h2>
         </div>
 
-        <MapSection places={places} initialRibbonFilter={initialRibbonFilter} />
+        <MapSection
+          places={places}
+          initialRibbonFilter={initialRibbonFilter}
+          initialSelectedPlaceId={initialSelectedPlaceId}
+        />
       </section>
     </>
   );

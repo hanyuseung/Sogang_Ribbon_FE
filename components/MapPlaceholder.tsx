@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useKakaoLoader, Map, CustomOverlayMap } from "react-kakao-maps-sdk";
 import { LocateFixed } from "lucide-react";
 import { Place } from "@/types/place";
@@ -21,7 +21,20 @@ export default function MapPlaceholder({ places, selectedPlaceId, onMarkerClick,
     appkey: process.env.NEXT_PUBLIC_KAKAO_JS_KEY!,
   });
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapReady, setMapReady] = useState(false);
   const mapRef = useRef<kakao.maps.Map | null>(null);
+
+  useEffect(() => {
+    if (!mapReady || !selectedPlaceId || !mapRef.current) return;
+
+    const selectedPlace = places.find((place) => place.id === selectedPlaceId);
+    if (selectedPlace?.latitude == null || selectedPlace.longitude == null) return;
+
+    mapRef.current.setLevel(3);
+    mapRef.current.panTo(
+      new window.kakao.maps.LatLng(selectedPlace.latitude, selectedPlace.longitude)
+    );
+  }, [mapReady, places, selectedPlaceId]);
 
   function handleMyLocation() {
   navigator.geolocation.getCurrentPosition(
@@ -88,7 +101,10 @@ export default function MapPlaceholder({ places, selectedPlaceId, onMarkerClick,
             center={SOGANG_CENTER}
             style={{ width: "100%", height: "100%" }}
             level={4}
-            onCreate={(map) => { mapRef.current = map; }}
+            onCreate={(map) => {
+              mapRef.current = map;
+              setMapReady(true);
+            }}
           >
             {places.map((place) => {
               if (place.latitude == null || place.longitude == null) return null;

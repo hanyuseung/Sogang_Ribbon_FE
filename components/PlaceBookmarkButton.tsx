@@ -84,12 +84,12 @@ export default function PlaceBookmarkButton({ placeId }: PlaceBookmarkButtonProp
   }
 
   return (
-    <div className="mb-[18px] mt-6">
+    <div className="mt-auto w-full pt-4">
       <button
         type="button"
         onClick={handleBookmark}
         disabled={isLoading || isSubmitting || isBookmarked}
-        className="w-full min-h-[46px] rounded-full bg-[#fff1f6] text-[#d6336c] text-sm font-black disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full min-h-[46px] rounded-full bg-[#fff1f6] text-[#d6336c] text-[13.7px] font-black disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         <Heart className="size-4" fill={isBookmarked ? "currentColor" : "none"} />
         {isSubmitting ? "저장 중..." : isBookmarked ? "북마크 완료" : "북마크"}

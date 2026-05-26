@@ -30,3 +30,15 @@ export async function getPlaceById(id: string): Promise<Place | null> {
   if (!place) return null
   return mapToPlace(place)
 }
+
+export async function getPlacesByNames(names: string[]): Promise<Place[]> {
+  const places = await prisma.place.findMany({
+    where: {
+      name: {
+        in: names,
+      },
+    },
+  })
+
+  return places.map(mapToPlace)
+}
