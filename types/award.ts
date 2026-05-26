@@ -1,6 +1,9 @@
 import { Place } from "@/types/place"
 
-export type AwardPlace = Pick<Place, "id" | "name" | "classification" | "img_url">
+export type AwardPlace = Pick<
+  Place,
+  "id" | "name" | "classification" | "img_url" | "desc_thumbnail" | "desc_detail"
+>
 
 export type AwardResult = {
   id: string

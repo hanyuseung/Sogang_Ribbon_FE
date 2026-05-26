@@ -4,12 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { Heart } from "lucide-react";
 import { Place } from "@/types/place";
 import PlaceCard from "@/components/PlaceCard";
-import { sortByDistance, sortByRibbon, sortByName, SOGANG_CENTER } from "@/lib/sort_functions";
+import { sortByDistance, sortByName, SOGANG_CENTER } from "@/lib/sort_functions";
 
-type SortOption = "거리순" | "리본별" | "가나다순";
+type SortOption = "거리순" | "가나다순";
 export type RibbonFilter = "cardinal" | "deepred" | "pink" | null;
 
-const SORT_OPTIONS: SortOption[] = ["거리순", "리본별", "가나다순"];
+const SORT_OPTIONS: SortOption[] = ["거리순", "가나다순"];
 
 const RIBBON_FILTERS: { value: RibbonFilter; label: string }[] = [
   { value: null,       label: "전체" },
@@ -26,6 +26,7 @@ interface Props {
   bookmarkFilter: boolean;
   onBookmarkFilterChange: (active: boolean) => void;
   canUseBookmarkFilter: boolean;
+  onPlaceSelect: (id: string) => void;
 }
 
 export default function PlaceListWithSort({
@@ -36,6 +37,7 @@ export default function PlaceListWithSort({
   bookmarkFilter,
   onBookmarkFilterChange,
   canUseBookmarkFilter,
+  onPlaceSelect,
 }: Props) {
   const [sort, setSort] = useState<SortOption>("거리순");
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -55,7 +57,6 @@ export default function PlaceListWithSort({
   }, [selectedPlaceId]);
 
   const sorted =
-    sort === "리본별"   ? sortByRibbon(places) :
     sort === "가나다순" ? sortByName(places) :
                          sortByDistance(places, userLocation ?? SOGANG_CENTER);
 
@@ -118,7 +119,11 @@ export default function PlaceListWithSort({
             }}
             className="w-full"
           >
-            <PlaceCard place={place} isActive={place.id === selectedPlaceId} />
+            <PlaceCard
+              place={place}
+              isActive={place.id === selectedPlaceId}
+              onSelect={onPlaceSelect}
+            />
           </div>
         ))}
       </div>

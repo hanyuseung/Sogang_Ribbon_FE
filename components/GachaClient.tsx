@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Place } from "@/types/place";
 import { RibbonFilter } from "@/components/PlaceListWithSort";
+import { getSupabaseImageUrl } from "@/lib/supabase-image";
 
 const CATEGORIES = ["전체", "한식", "일식", "양식", "아시안", "카페"];
 const FOOD_ICONS = ["🍜", "🍱", "🍣", "🥩", "🍛", "🍝"];
@@ -69,13 +70,18 @@ setResult(random ?? null);
     ? result
       ? result.name
       : "해당 조건에 맞는 식당이 없어요"
-    : "오늘은 파스타 어떠세요?";
+    : "오늘 당신을 위한 추천 메뉴!";
 
   const resultDesc = spinning
     ? ""
     : picked && result
     ? result.classification ?? ""
-    : "분위기도 챙기고 싶고, 밥약도 망치고 싶지 않은 날에 추천.";
+    : "어디로 갈지 고민되나요?\n서강 리본이 엄선한 실패없는 맛집을 확인해 보세요.";
+  const resultImageUrl = getSupabaseImageUrl(result?.img_url, {
+    width: 720,
+    height: 320,
+    quality: 65,
+  });
 
   return (
     <div className="p-5 bg-white rounded-[24px] shadow-[0_12px_28px_rgba(80,37,54,0.08)] text-center">
@@ -130,10 +136,10 @@ setResult(random ?? null);
             className="block rounded-[22px] overflow-hidden bg-gradient-to-br from-[#ffd6e5] to-[#fff8fb] active:opacity-80 transition-opacity"
           >
             <div className="relative w-full h-[160px] bg-gradient-to-br from-[#ffd6e5] to-[#fff1f6] flex items-center justify-center overflow-hidden">
-              {result.img_url ? (
+              {resultImageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={result.img_url}
+                  src={resultImageUrl}
                   alt={result.name}
                   className="block w-full h-full object-cover"
                 />
@@ -155,7 +161,7 @@ setResult(random ?? null);
       ) : (
         <div className="p-5 rounded-[22px] bg-gradient-to-br from-[#ffd6e5] to-[#fff8fb]">
           <h3 className="text-[22px] font-bold mb-2">{resultTitle}</h3>
-          <p className="text-sm text-[#765260]">{resultDesc}</p>
+          <p className="whitespace-pre-line text-sm text-[#765260]">{resultDesc}</p>
         </div>
       )}
     </div>

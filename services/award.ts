@@ -11,7 +11,14 @@ export async function getAwards(): Promise<AwardData[]> {
             orderBy: { rank: "asc" },
             include: {
               place: {
-                select: { id: true, name: true, classification: true, imgUrl: true },
+                select: {
+                  id: true,
+                  name: true,
+                  classification: true,
+                  imgUrl: true,
+                  descThumbnail: true,
+                  descDetail: true,
+                },
               },
             },
           },
@@ -35,7 +42,9 @@ export async function getAwards(): Promise<AwardData[]> {
           id: res.place.id,
           name: res.place.name,
           classification: res.place.classification,
-          img_url: res.place.imgUrl,
+          img_url: res.place.imgUrl ?? null,
+          desc_thumbnail: res.place.descThumbnail ?? null,
+          desc_detail: res.place.descDetail ?? null,
         },
       })),
     })),

@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { getPlaceById } from "@/services/place";
 import PlaceBookmarkButton from "@/components/PlaceBookmarkButton";
 import { Place } from "@/types/place";
+import { getSupabaseImageUrl } from "@/lib/supabase-image";
 
 type RibbonTier = "cardinal" | "deepred" | "pink" | null;
 
@@ -14,9 +15,9 @@ const RIBBON_LABEL: Record<NonNullable<RibbonTier>, string> = {
 };
 
 const RIBBON_CLASS: Record<NonNullable<RibbonTier>, string> = {
-  cardinal: "bg-[#f8d7da] text-[#9b1c31]",
+  cardinal: "bg-[#ffe2e2] text-[#d9480f]",
   deepred: "bg-[#ffe2e2] text-[#d9480f]",
-  pink: "bg-[#ffe3ec] text-[#d6336c]",
+  pink: "bg-[#ffe2e2] text-[#d9480f]",
 };
 
 function getTopRibbon(place: Place): RibbonTier {
@@ -37,6 +38,11 @@ export default async function PlaceDetailPage({
   if (!place) notFound();
 
   const topRibbon = getTopRibbon(place);
+  const imageUrl = getSupabaseImageUrl(place.img_url, {
+    width: 860,
+    height: 460,
+    quality: 70,
+  });
 
   return (
     <div className="min-h-full bg-[#fff8fb]">
@@ -55,34 +61,46 @@ export default async function PlaceDetailPage({
 
         {/* 이미지 */}
         <div className="h-[230px] rounded-[28px] bg-gradient-to-br from-[#ffd6e5] to-[#fff1f6] flex items-center justify-center overflow-hidden mb-4">
-          {place.img_url ? (
+          {imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={place.img_url} alt={place.name} className="w-full h-full object-cover" />
+            <img src={imageUrl} alt={place.name} className="w-full h-full object-cover" />
           ) : (
             <span className="text-[#d6336c] font-black">음식 이미지 영역</span>
           )}
         </div>
 
         {/* 상세 카드 */}
-        <div className="bg-white rounded-[24px] shadow-[0_12px_28px_rgba(80,37,54,0.08)] p-[18px]">
-          {topRibbon && (
-            <span
-              className={`inline-block px-[9px] py-1 rounded-full text-[11px] font-black ${RIBBON_CLASS[topRibbon]}`}
-            >
-              {RIBBON_LABEL[topRibbon]}
-            </span>
-          )}
+        <div className="relative flex min-h-[345px] flex-col items-start gap-2 rounded-[24px] bg-white px-[18px] pb-9 pt-5 shadow-[0_12px_28px_rgba(80,37,54,0.08)]">
+          <div className="flex items-center gap-2">
+            {topRibbon && (
+              <span
+                className={`inline-flex h-[25px] items-center px-[9px] py-1 rounded-full text-[10.7px] leading-4 font-black ${RIBBON_CLASS[topRibbon]}`}
+              >
+                {RIBBON_LABEL[topRibbon]}
+              </span>
+            )}
 
-          <div className="flex items-center gap-3 my-2">
-            <h2 className="text-[27px] font-bold">{place.name}</h2>
+            {place.classification && (
+              <span className="inline-flex h-[25px] items-center justify-center rounded-full bg-[#d6336c] px-[10px] py-1 text-[11px] font-black leading-4 text-white shadow-sm">
+                {place.classification}
+              </span>
+            )}
           </div>
 
-          <p className="text-[#6f4c59] text-sm">
-            {place.classification}
-          </p>
+          <div className="flex w-full items-center pb-px">
+            <h2 className="w-full truncate text-[25.4px] font-bold leading-10 text-[#2b1b22]">
+              {place.name}
+            </h2>
+          </div>
+
+          {place.desc_thumbnail && (
+            <p className="w-full pb-4 text-[14px] font-bold leading-5 text-[#6f4c59]">
+              {place.desc_thumbnail}
+            </p>
+          )}
 
           {place.desc_detail && (
-            <p className="mt-4 text-[15px] leading-7 text-[#4b313b] whitespace-pre-line">
+            <p className="w-full text-justify text-[13.2px] leading-5 text-[#6f4c59] whitespace-pre-line">
               {place.desc_detail}
             </p>
           )}
