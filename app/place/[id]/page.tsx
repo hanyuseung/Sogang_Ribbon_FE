@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { getPlaceById } from "@/services/place";
 import PlaceBookmarkButton from "@/components/PlaceBookmarkButton";
+import BackButton from "@/components/BackButton";
 import { Place } from "@/types/place";
 import { getSupabaseImageUrl } from "@/lib/supabase-image";
 
@@ -47,9 +46,7 @@ export default async function PlaceDetailPage({
   return (
     <div className="min-h-full bg-[#fff8fb]">
       <header className="sticky top-0 z-20 h-16 px-5 bg-[rgba(255,248,251,0.92)] backdrop-blur-[14px] border-b border-[#f3d5df] flex items-center gap-3">
-        <Link href="/map" className="text-[#7a5965] p-1 -ml-1">
-          <ArrowLeft className="size-5" />
-        </Link>
+        <BackButton fallbackHref="/map" />
         <span className="font-bold text-[#2b1b22] truncate">{place.name}</span>
       </header>
 
