@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { containsProfanity } from "@/lib/profanity";
+import { CANONICAL_SITE_URL } from "@/lib/site-url";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -31,7 +32,10 @@ export default function SignupPage() {
     const { error: authError } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { nickname } },
+      options: {
+        data: { nickname },
+        emailRedirectTo: `${CANONICAL_SITE_URL}/login`,
+      },
     });
 
     if (authError) {

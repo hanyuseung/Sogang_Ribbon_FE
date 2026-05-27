@@ -4,6 +4,7 @@ import Providers from "@/app/providers";
 import BottomNav from "@/components/BottomNav";
 import PageTransition from "@/components/PageTransition";
 import Header from "@/components/Header";
+import { CANONICAL_SITE_URL } from "@/lib/site-url";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,6 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(CANONICAL_SITE_URL),
   title: "서강리본",
   description: "서강대학교 주변 맛집 리뷰 서비스",
 };
