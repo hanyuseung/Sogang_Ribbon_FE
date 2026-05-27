@@ -21,6 +21,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(CANONICAL_SITE_URL),
   title: "서강리본",
   description: "서강대학교 주변 맛집 리뷰 서비스",
+  // 💡 아래 icons 부분을 추가합니다.
+  icons: {
+    icon: "/app_icon.svg", // /public 폴더는 기본 루트(/)로 매핑됩니다.
+    // 만약 애플 기기용 아이콘(홈 화면 추가 시)도 함께 쓰고 싶다면 아래도 추가 가능합니다.
+    apple: "/app_icon.svg", 
+  },
 };
 
 export default function RootLayout({
