@@ -102,7 +102,7 @@ function CollaborationCard({
   }
 
   return (
-    <Link href={`/map?place=${encodeURIComponent(place.id)}`} className={className}>
+    <Link href={`/place/${encodeURIComponent(place.id)}`} className={className}>
       {content}
     </Link>
   );
