@@ -7,9 +7,9 @@ const VALID_RIBBON = new Set<string>(["cardinal", "deepred", "pink"]);
 export default async function MapPage({
   searchParams,
 }: {
-  searchParams: Promise<{ ribbon?: string; place?: string }>;
+  searchParams: Promise<{ ribbon?: string; search?: string; place?: string }>;
 }) {
-  const { ribbon, place } = await searchParams;
+  const { ribbon, search, place } = await searchParams;
   const places = await getPlaces();
   const initialRibbonFilter =
     ribbon && VALID_RIBBON.has(ribbon) ? (ribbon as RibbonFilter) : null;
@@ -27,6 +27,7 @@ export default async function MapPage({
         <MapSection
           places={places}
           initialRibbonFilter={initialRibbonFilter}
+          initialSearchQuery={search}
           initialSelectedPlaceId={initialSelectedPlaceId}
         />
       </section>

@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { getPlaceById } from "@/services/place";
 import PlaceBookmarkButton from "@/components/PlaceBookmarkButton";
 import BackButton from "@/components/BackButton";
 import { Place } from "@/types/place";
 import { getSupabaseImageUrl } from "@/lib/supabase-image";
+import { MapPin, Navigation } from "lucide-react";
 
 type RibbonTier = "cardinal" | "deepred" | "pink" | null;
 
@@ -42,6 +44,10 @@ export default async function PlaceDetailPage({
     height: 460,
     quality: 70,
   });
+  const kakaoDirectionsUrl =
+    place.address && place.latitude != null && place.longitude != null
+      ? `https://map.kakao.com/link/to/${encodeURIComponent(place.address)},${place.latitude},${place.longitude}`
+      : null;
 
   return (
     <div className="min-h-full bg-[#fff8fb]">
@@ -103,7 +109,30 @@ export default async function PlaceDetailPage({
           )}
 
           {/* 액션 버튼 */}
-          <PlaceBookmarkButton placeId={place.id} />
+          <div className="mt-auto flex w-full gap-2 pt-4">
+            <PlaceBookmarkButton placeId={place.id} />
+            <Link
+              href={{
+                pathname: "/map",
+                query: { search: place.name, place: place.id },
+              }}
+              className="flex min-h-[46px] flex-1 items-center justify-center gap-2 rounded-full bg-[#d6336c] text-[13.7px] font-black text-white"
+            >
+              <MapPin className="size-4" />
+              지도로 이동하기
+            </Link>
+          </div>
+          {kakaoDirectionsUrl && (
+            <a
+              href={kakaoDirectionsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-full border border-[#f0b6c9] bg-white text-[13.7px] font-black text-[#d6336c]"
+            >
+              <Navigation className="size-4" />
+              카카오맵에서 길찾기
+            </a>
+          )}
         </div>
       </section>
     </div>

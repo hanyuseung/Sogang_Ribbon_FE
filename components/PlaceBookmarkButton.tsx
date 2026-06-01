@@ -84,7 +84,7 @@ export default function PlaceBookmarkButton({ placeId }: PlaceBookmarkButtonProp
   }
 
   return (
-    <div className="mt-auto w-full pt-4">
+    <div className="flex-1">
       <button
         type="button"
         onClick={handleBookmark}
