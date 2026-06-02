@@ -23,6 +23,7 @@ export default function MapSection({
   initialSelectedPlaceId?: string | null;
 }) {
   const { user } = useAuth();
+  const userId = user?.id;
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(initialSelectedPlaceId ?? null);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery ?? "");
@@ -34,7 +35,7 @@ export default function MapSection({
     let ignore = false;
 
     async function fetchBookmarks() {
-      if (!user) {
+      if (!userId) {
         setBookmarkedPlaceIds(new Set());
         setBookmarkFilter(false);
         return;
@@ -59,7 +60,7 @@ export default function MapSection({
     return () => {
       ignore = true;
     };
-  }, [user]);
+  }, [userId]);
 
   const classificationFiltered = activeFilter
     ? places.filter((p) => p.classification === activeFilter)

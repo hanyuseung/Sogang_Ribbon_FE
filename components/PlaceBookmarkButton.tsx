@@ -13,6 +13,7 @@ type PlaceBookmarkButtonProps = {
 export default function PlaceBookmarkButton({ placeId }: PlaceBookmarkButtonProps) {
   const router = useRouter();
   const { user, isLoading } = useAuth();
+  const userId = user?.id;
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -21,7 +22,7 @@ export default function PlaceBookmarkButton({ placeId }: PlaceBookmarkButtonProp
     let ignore = false;
 
     async function fetchBookmarkStatus() {
-      if (!user) return;
+      if (!userId) return;
 
       const {
         data: { session },
@@ -42,7 +43,7 @@ export default function PlaceBookmarkButton({ placeId }: PlaceBookmarkButtonProp
     return () => {
       ignore = true;
     };
-  }, [placeId, user]);
+  }, [placeId, userId]);
 
   async function handleBookmark() {
     setErrorMessage("");
