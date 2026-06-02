@@ -37,7 +37,6 @@ export async function getAwards(): Promise<AwardData[]> {
       results: cat.results.map((res) => ({
         id: res.id,
         rank: res.rank,
-        description: res.description,
         place: {
           id: res.place.id,
           name: res.place.name,

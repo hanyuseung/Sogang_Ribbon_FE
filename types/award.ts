@@ -8,7 +8,6 @@ export type AwardPlace = Pick<
 export type AwardResult = {
   id: string
   rank: number | null
-  description: string | null
   place: AwardPlace
 }
 
