@@ -50,7 +50,7 @@ export default function MapSection({
   }) {
     const params = new URLSearchParams(window.location.search);
     const nextType = next.type === undefined ? activeFilter : next.type;
-    const nextRibbon = next.ribbon ?? ribbonFilter;
+    const nextRibbon = next.ribbon === undefined ? ribbonFilter : next.ribbon;
     const nextSearch = next.search ?? searchQuery;
     const nextPlace = next.place === undefined ? selectedPlaceId : next.place;
 
