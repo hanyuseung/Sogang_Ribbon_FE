@@ -6,7 +6,7 @@ import { LocateFixed } from "lucide-react";
 import { Place } from "@/types/place";
 
 const SOGANG_CENTER = { lat: 37.551, lng: 126.9394 };
-const FILTER_OPTIONS = ["한식", "일식", "양식", "아시안", "카페"];
+export const MAP_TYPE_FILTERS = ["한식", "일식", "양식", "아시안", "카페"];
 
 interface Props {
   places: Place[];
@@ -75,7 +75,7 @@ export default function MapPlaceholder({ places, selectedPlaceId, onMarkerClick,
       {!loading && !error && (
         <>
           <div className="absolute top-3 left-0 right-0 z-10 flex gap-2 px-3 overflow-x-auto no-scrollbar">
-            {FILTER_OPTIONS.map((filter) => (
+            {MAP_TYPE_FILTERS.map((filter) => (
               <button
                 key={filter}
                 onClick={() => onFilterChange(activeFilter === filter ? null : filter)}

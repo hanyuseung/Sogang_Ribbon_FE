@@ -2,35 +2,13 @@ import { Suspense } from "react";
 import MapSection from "@/components/MapSection";
 import MapLoadingFrame from "@/components/MapLoadingFrame";
 import { getPlaces } from "@/services/place";
-import { RibbonFilter } from "@/components/PlaceListWithSort";
 
-const VALID_RIBBON = new Set<string>(["cardinal", "deepred", "pink"]);
-
-type MapSearchParams = Promise<{ ribbon?: string; search?: string; place?: string }>;
-
-async function MapContent({ searchParams }: { searchParams: MapSearchParams }) {
-  const { ribbon, search, place } = await searchParams;
+async function MapContent() {
   const places = await getPlaces();
-  const initialRibbonFilter =
-    ribbon && VALID_RIBBON.has(ribbon) ? (ribbon as RibbonFilter) : null;
-  const initialSelectedPlaceId =
-    place && places.some((p) => p.id === place) ? place : null;
-
-  return (
-    <MapSection
-      places={places}
-      initialRibbonFilter={initialRibbonFilter}
-      initialSearchQuery={search}
-      initialSelectedPlaceId={initialSelectedPlaceId}
-    />
-  );
+  return <MapSection places={places} />;
 }
 
-export default function MapPage({
-  searchParams,
-}: {
-  searchParams: MapSearchParams;
-}) {
+export default function MapPage() {
   return (
     <section className="px-[18px] pt-6">
       <div className="mb-4">
@@ -39,7 +17,7 @@ export default function MapPage({
       </div>
 
       <Suspense fallback={<MapLoadingFrame />}>
-        <MapContent searchParams={searchParams} />
+        <MapContent />
       </Suspense>
     </section>
   );
