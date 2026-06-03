@@ -13,6 +13,7 @@ type PlaceBookmarkButtonProps = {
 export default function PlaceBookmarkButton({ placeId }: PlaceBookmarkButtonProps) {
   const router = useRouter();
   const { user, isLoading } = useAuth();
+  const userId = user?.id;
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -21,7 +22,7 @@ export default function PlaceBookmarkButton({ placeId }: PlaceBookmarkButtonProp
     let ignore = false;
 
     async function fetchBookmarkStatus() {
-      if (!user) return;
+      if (!userId) return;
 
       const {
         data: { session },
@@ -42,7 +43,7 @@ export default function PlaceBookmarkButton({ placeId }: PlaceBookmarkButtonProp
     return () => {
       ignore = true;
     };
-  }, [placeId, user]);
+  }, [placeId, userId]);
 
   async function handleBookmark() {
     setErrorMessage("");
@@ -65,7 +66,7 @@ export default function PlaceBookmarkButton({ placeId }: PlaceBookmarkButtonProp
     }
 
     const res = await fetch("/api/bookmarks", {
-      method: "POST",
+      method: isBookmarked ? "DELETE" : "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session.access_token}`,
@@ -76,11 +77,11 @@ export default function PlaceBookmarkButton({ placeId }: PlaceBookmarkButtonProp
     setIsSubmitting(false);
 
     if (!res.ok) {
-      setErrorMessage("북마크 저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
+      setErrorMessage("북마크 변경에 실패했어요. 잠시 후 다시 시도해 주세요.");
       return;
     }
 
-    setIsBookmarked(true);
+    setIsBookmarked(!isBookmarked);
   }
 
   return (
@@ -88,11 +89,11 @@ export default function PlaceBookmarkButton({ placeId }: PlaceBookmarkButtonProp
       <button
         type="button"
         onClick={handleBookmark}
-        disabled={isLoading || isSubmitting || isBookmarked}
+        disabled={isLoading || isSubmitting}
         className="w-full min-h-[46px] rounded-full bg-[#fff1f6] text-[#d6336c] text-[13.7px] font-black disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         <Heart className="size-4" fill={isBookmarked ? "currentColor" : "none"} />
-        {isSubmitting ? "저장 중..." : isBookmarked ? "북마크 완료" : "북마크"}
+        {isSubmitting ? "처리 중..." : isBookmarked ? "북마크 취소" : "북마크"}
       </button>
       {errorMessage && (
         <p className="mt-2 text-center text-xs font-bold text-[#d6336c]">{errorMessage}</p>

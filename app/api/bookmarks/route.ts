@@ -26,6 +26,11 @@ async function getAuthedUserId(req: Request) {
   return user.id;
 }
 
+async function getPlaceId(req: Request) {
+  const body = (await req.json().catch(() => null)) as { placeId?: unknown } | null;
+  return typeof body?.placeId === "string" ? body.placeId : null;
+}
+
 export async function GET(req: Request) {
   const userId = await getAuthedUserId(req);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -52,8 +57,7 @@ export async function POST(req: Request) {
   const userId = await getAuthedUserId(req);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = (await req.json().catch(() => null)) as { placeId?: unknown } | null;
-  const placeId = typeof body?.placeId === "string" ? body.placeId : null;
+  const placeId = await getPlaceId(req);
   if (!placeId) return NextResponse.json({ error: "placeId is required" }, { status: 400 });
 
   const place = await prisma.place.findUnique({ where: { id: placeId }, select: { id: true } });
@@ -66,4 +70,18 @@ export async function POST(req: Request) {
   });
 
   return NextResponse.json({ bookmarked: true, bookmark });
+}
+
+export async function DELETE(req: Request) {
+  const userId = await getAuthedUserId(req);
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const placeId = await getPlaceId(req);
+  if (!placeId) return NextResponse.json({ error: "placeId is required" }, { status: 400 });
+
+  await prisma.placeBookmark.deleteMany({
+    where: { userId, placeId },
+  });
+
+  return NextResponse.json({ bookmarked: false });
 }

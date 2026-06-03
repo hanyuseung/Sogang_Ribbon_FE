@@ -19,6 +19,7 @@ type BookmarkResponse = {
 
 export default function BookmarksPage() {
   const { user, isLoading } = useAuth();
+  const userId = user?.id;
   const [bookmarkedPlaces, setBookmarkedPlaces] = useState<BookmarkPlace[]>([]);
   const [isBookmarksLoading, setIsBookmarksLoading] = useState(false);
 
@@ -26,7 +27,7 @@ export default function BookmarksPage() {
     let ignore = false;
 
     async function fetchBookmarks() {
-      if (!user) {
+      if (!userId) {
         setBookmarkedPlaces([]);
         return;
       }
@@ -65,7 +66,7 @@ export default function BookmarksPage() {
     return () => {
       ignore = true;
     };
-  }, [user]);
+  }, [userId]);
 
   if (isLoading || isBookmarksLoading) {
     return (
