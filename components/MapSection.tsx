@@ -42,6 +42,17 @@ export default function MapSection({
       ? selectedPlaceParam
       : null;
 
+  // 검색 input은 로컬 state로 제어한다. URL(searchParams)을 value로 직접 쓰면
+  // 라우터 상태 갱신이 비동기라 한글 IME 조합이 글자마다 끊긴다(자모 분리).
+  const [searchInput, setSearchInput] = useState(searchQuery);
+  const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
+
+  // 뒤로가기, 외부 링크 등으로 URL이 바뀐 경우에만 입력값을 맞춘다
+  if (prevSearchQuery !== searchQuery) {
+    setPrevSearchQuery(searchQuery);
+    if (searchQuery !== searchInput.trim()) setSearchInput(searchQuery);
+  }
+
   function updateMapUrl(next: {
     type?: string | null;
     ribbon?: RibbonFilter;
@@ -71,6 +82,7 @@ export default function MapSection({
   }
 
   function handleSearchChange(value: string) {
+    setSearchInput(value);
     updateMapUrl({ search: value });
   }
 
@@ -141,7 +153,7 @@ export default function MapSection({
   return (
     <div>
       <input
-        value={searchQuery}
+        value={searchInput}
         onChange={(e) => handleSearchChange(e.target.value)}
         className="w-full h-[46px] px-4 rounded-full border border-[#f0b6c9] bg-white mb-[14px] text-sm focus:outline-none focus:ring-2 focus:ring-[#f0b6c9]"
         type="text"
