@@ -13,3 +13,5 @@ export type Place = {
   desc_thumbnail: string | null;
   desc_detail: string | null;
 };
+
+export type PlaceInput = Omit<Place, "id">;

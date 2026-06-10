@@ -28,14 +28,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         authUser.email?.split("@")[0] ??
         "",
       profile_url: "",
+      role: null,
     });
     setIsLoading(false);
 
-    // Prisma API로 nickname / profile_url / review_cnt 보강 (비동기)
+    // Prisma API로 nickname / profile_url / role 보강 (비동기)
     const res = await fetch(`/api/me?userId=${authUser.id}`);
     if (res.ok) {
       const profile = await res.json();
       setUser((prev) => (prev ? { ...prev, ...profile } : null));
+    } else {
+      setUser((prev) => (prev ? { ...prev, role: prev.role ?? "user" } : null));
     }
   }
 
