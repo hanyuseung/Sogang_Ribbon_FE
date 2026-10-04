@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useKakaoLoader, Map, CustomOverlayMap } from "react-kakao-maps-sdk";
 import { LocateFixed } from "lucide-react";
 import { Place } from "@/types/place";
+import { kakaoLoaderOptions } from "@/lib/kakao-loader";
 
 const SOGANG_CENTER = { lat: 37.551, lng: 126.9394 };
 export const MAP_TYPE_FILTERS = ["한식", "일식", "양식", "아시안", "카페"];
@@ -17,9 +18,7 @@ interface Props {
 }
 
 export default function MapPlaceholder({ places, selectedPlaceId, onMarkerClick, activeFilter, onFilterChange }: Props) {
-  const [loading, error] = useKakaoLoader({
-    appkey: process.env.NEXT_PUBLIC_KAKAO_JS_KEY!,
-  });
+  const [loading, error] = useKakaoLoader(kakaoLoaderOptions);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [mapReady, setMapReady] = useState(false);
   const mapRef = useRef<kakao.maps.Map | null>(null);
