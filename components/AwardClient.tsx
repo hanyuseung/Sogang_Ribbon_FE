@@ -96,6 +96,7 @@ function CategorySection({ category }: { category: AwardCategory }) {
 }
 
 function AwardPlaceCard({ result }: { result: AwardResult }) {
+  const description = result.description ?? result.place.desc_detail
   const imageUrl = getSupabaseImageUrl(result.place.img_url, {
     width: 720,
     height: 320,
@@ -144,10 +145,10 @@ function AwardPlaceCard({ result }: { result: AwardResult }) {
         )}
       </div>
 
-      {result.place.desc_detail && (
+      {description && (
         <div className="mx-[15px] h-[89px] w-[calc(100%-30px)] overflow-hidden rounded-[20px] bg-white px-4 py-3">
           <p className="line-clamp-4 text-[11.4px] font-light leading-[18px] text-black">
-            {result.place.desc_detail}
+            {description}
           </p>
         </div>
       )}

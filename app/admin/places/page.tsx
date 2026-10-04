@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Pencil, Plus } from "lucide-react";
+import { ArrowLeft, Pencil, Plus, Search } from "lucide-react";
 import AdminGuard from "@/components/AdminGuard";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { Place } from "@/types/place";
+import { filterPlaces } from "@/lib/place-search";
 
 function AdminPlaceList() {
   const { user } = useAuth();
@@ -14,6 +15,8 @@ function AdminPlaceList() {
   const [places, setPlaces] = useState<Place[]>([]);
   const [isListLoading, setIsListLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const filteredPlaces = filterPlaces(places, searchQuery);
 
   useEffect(() => {
     let ignore = false;
@@ -68,6 +71,25 @@ function AdminPlaceList() {
       </header>
 
       <main className="max-w-screen-sm mx-auto pb-16">
+        <div className="bg-white px-5 py-4">
+          <label htmlFor="admin-place-search" className="sr-only">식당 검색</label>
+          <div className="relative">
+            <Search aria-hidden="true" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#7a5965]" />
+            <input
+              id="admin-place-search"
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="식당 이름, 주소, 분류 검색"
+              className="w-full rounded-xl border border-[#f3d5df] bg-[#fff8fb] py-3 pl-10 pr-3 text-sm text-[#2b1b22] placeholder-[#c4a0b0] focus:outline-none focus:border-[#d6336c]"
+            />
+          </div>
+          {!isListLoading && !errorMessage && (
+            <p role="status" className="mt-2 text-xs text-[#7a5965]">
+              {searchQuery.trim() ? `검색 결과 ${filteredPlaces.length}개` : `전체 ${places.length}개`}
+            </p>
+          )}
+        </div>
         <div className="bg-white mt-2">
           {isListLoading ? (
             <p className="text-sm text-[#7a5965] text-center py-12">로딩 중...</p>
@@ -75,9 +97,14 @@ function AdminPlaceList() {
             <p className="text-sm text-[#d6336c] text-center py-12">{errorMessage}</p>
           ) : places.length === 0 ? (
             <p className="text-sm text-[#7a5965] text-center py-12">등록된 식당이 없어요</p>
+          ) : filteredPlaces.length === 0 ? (
+            <div className="flex flex-col items-center gap-3 py-12">
+              <p className="text-sm text-[#7a5965]">검색 결과가 없어요</p>
+              <button type="button" onClick={() => setSearchQuery("")} className="text-xs font-bold text-[#d6336c]">전체 식당 보기</button>
+            </div>
           ) : (
             <ul className="divide-y divide-[#f3d5df]">
-              {places.map((place) => (
+              {filteredPlaces.map((place) => (
                 <li key={place.id}>
                   <Link
                     href={`/admin/places/${place.id}/edit`}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronRight, LogOut, Store } from "lucide-react";
+import { ChevronRight, LogOut, Store, Trophy } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function MyPage() {
@@ -62,16 +62,28 @@ export default function MyPage() {
             <ChevronRight className="size-4 text-[#d6336c]" />
           </Link>
           {user.role === "admin" && (
-            <Link
-              href="/admin/places"
-              className="flex items-center justify-between px-5 py-4 border-b border-[#f3d5df] hover:bg-[#fff8fb] transition-colors"
-            >
-              <span className="flex items-center gap-2 text-sm font-bold text-[#2b1b22]">
-                <Store className="size-4 text-[#d6336c]" />
-                식당 관리
-              </span>
-              <ChevronRight className="size-4 text-[#d6336c]" />
-            </Link>
+            <>
+              <Link
+                href="/admin/places"
+                className="flex items-center justify-between px-5 py-4 border-b border-[#f3d5df] hover:bg-[#fff8fb] transition-colors"
+              >
+                <span className="flex items-center gap-2 text-sm font-bold text-[#2b1b22]">
+                  <Store className="size-4 text-[#d6336c]" />
+                  식당 관리
+                </span>
+                <ChevronRight className="size-4 text-[#d6336c]" />
+              </Link>
+              <Link
+                href="/admin/awards"
+                className="flex items-center justify-between px-5 py-4 border-b border-[#f3d5df] hover:bg-[#fff8fb] transition-colors"
+              >
+                <span className="flex items-center gap-2 text-sm font-bold text-[#2b1b22]">
+                  <Trophy className="size-4 text-[#d6336c]" />
+                  어워드 관리
+                </span>
+                <ChevronRight className="size-4 text-[#d6336c]" />
+              </Link>
+            </>
           )}
         </div>
 
